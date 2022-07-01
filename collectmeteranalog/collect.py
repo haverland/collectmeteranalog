@@ -38,12 +38,12 @@ def readimages(servername, output_dir, daysback=15):
             hour = f'{i:02d}'
             if not os.path.exists(path = output_dir + "/" + servername + "/" + picturedate + "/" + hour):
                 try:
-                    fp = urllib.request.urlopen(serverurl + "/fileserver/log/digit/" + picturedate + "/" + hour + "/")
+                    fp = urllib.request.urlopen(serverurl + "/fileserver/log/analog/" + picturedate + "/" + hour + "/")
                 except HTTPError as h:
                     print( serverurl + "/fileserver/log/analog/" + picturedate + "/" + hour + "/ not found." )
                     continue
                 except URLError as ue:
-                    print("URL-Error! Server not available? Requested URL was: ", serverurl + "/fileserver/log/digit/" + picturedate + "/" + hour + "/" )
+                    print("URL-Error! Server not available? Requested URL was: ", serverurl + "/fileserver/log/analog/" + picturedate + "/" + hour + "/" )
                     exit(1)
                 print("Loading ... ",  servername + "/" + picturedate + "/" + hour)
                 
