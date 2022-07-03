@@ -119,7 +119,7 @@ def label(path, startlabel=0, imageurlsfile=None):
         slabel.set_val(filelabel)
         fig = plt.gcf()
         fig.canvas.manager.set_window_title(str(i) + ' of ' + str(len(files)) + ' images')
-        predbox.set_text("{:.1f}".format(predict(img_3232)))
+        predbox.set_val("{:.1f}".format(predict(img_3232)))
         plt.draw()
 
 

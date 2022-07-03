@@ -25,9 +25,12 @@ def predict(image):
     # Run inference.
     interpreter.invoke()
     output = interpreter.get_tensor(output_index)
-    out_sin = output[0][0]  
-    out_cos = output[0][1]
-    return round(((np.arctan2(out_sin, out_cos)/(2*math.pi)) % 1) *10, 1)
+    if (len(output[0])==2):
+        out_sin = output[0][0]  
+        out_cos = output[0][1]
+        return round(((np.arctan2(out_sin, out_cos)/(2*math.pi)) % 1) *10, 1)
+    else:
+        return round(np.argmax(output[0])/10,1)
 
     
 
