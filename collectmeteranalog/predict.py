@@ -3,11 +3,20 @@ import numpy as np
 import pkg_resources
 import math
 
+interpreter=None
+internal_model_path = pkg_resources.resource_filename('collectmeteranalog', 'models/ana0910s1_dropoutq.tflite')
 
-def predict( image, model_path='ana0910s1_dropoutq.tflite'):
-    DATA_PATH = pkg_resources.resource_filename('collectmeteranalog', 'models/' + model_path)
+def load_interpreter(model_path):
+    global interpreter
+    interpreter = tf.lite.Interpreter(model_path=model_path)
+    return interpreter
 
-    interpreter = tf.lite.Interpreter(model_path=DATA_PATH)
+def predict(image):
+    global interpreter
+
+    if interpreter==None:
+        load_interpreter(internal_model_path)
+
     interpreter.allocate_tensors()
     input_index = interpreter.get_input_details()[0]["index"]
     output_index = interpreter.get_output_details()[0]["index"]
