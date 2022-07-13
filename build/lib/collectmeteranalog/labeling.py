@@ -37,6 +37,9 @@ def label(path, startlabel=0, imageurlsfile=None):
 
     if (imageurlsfile!=None):
         files = pd.read_csv(imageurlsfile, index_col=0).to_numpy().reshape(-1)
+        for j, file in enumerate(files):
+            if (not os.path.exists(file)):
+                files = np.delete(files, j, axis=0)
     else: 
         files = ziffer_data_files(path)
 
@@ -45,7 +48,7 @@ def label(path, startlabel=0, imageurlsfile=None):
         exit(1)
         
     i = 0
-    img, img_3232,  filelabel, filename, i = load_image(files, i, startlabel)
+    img, filelabel, filename, i = load_image(files, i, startlabel)
 
     # disable toolbar
     matplotlib.rcParams['toolbar'] = 'None'
@@ -81,7 +84,7 @@ def label(path, startlabel=0, imageurlsfile=None):
     ax2.set_yticklabels([])
     #ax2.spines['polar'].set_visible(False)
     #plt.text(1.1, 0.9, "You can use cursor key controll also:\n\nleft/right = prev/next\nup/down=in/decrease value\ndelete=remove.", fontsize=6)
-    prediction = predict(img_3232)
+    prediction = predict(img)
     ax=plt.gca()
 
     axp = plt.axes([0.05, 0.5, 0.1, 0.2])
@@ -113,13 +116,13 @@ def label(path, startlabel=0, imageurlsfile=None):
         global predbox
 
         i = (i - 1) % len(files)
-        img, img_3232, filelabel, filename, i = load_image(files, i)
+        img, filelabel, filename, i = load_image(files, i)
         im.set_data(img)
         title.set_text(filelabel)
         slabel.set_val(filelabel)
         fig = plt.gcf()
         fig.canvas.manager.set_window_title(str(i) + ' of ' + str(len(files)) + ' images')
-        predbox.set_val("{:.1f}".format(predict(img_3232)))
+        predbox.set_val("{:.1f}".format(predict(img)))
         plt.draw()
 
 
@@ -134,13 +137,14 @@ def label(path, startlabel=0, imageurlsfile=None):
 
         if increaseindex:
             i = (i + 1) % len(files)
-        img, img_3232, filelabel, filename, i = load_image(files, i)
+        
+        img, filelabel, filename, i = load_image(files, i)
         im.set_data(img)
         title.set_text(filelabel)
         slabel.set_val(filelabel)
         fig = plt.gcf()
         fig.canvas.manager.set_window_title(str(i) + ' of ' + str(len(files)) + ' images')
-        predbox.set_val("Pred.:\n{:.1f}".format(predict(img_3232)))
+        predbox.set_val("Pred.:\n{:.1f}".format(predict(img)))
         
         plt.draw()
 
@@ -220,6 +224,5 @@ def load_image(files, i, startlabel = -1):
 
     filename = files[i]
     test_image = Image.open(filename)
-    test_image_resized = test_image.resize((32, 32))
-    return test_image, test_image_resized, category, filename, i
+    return test_image, category, filename, i
     

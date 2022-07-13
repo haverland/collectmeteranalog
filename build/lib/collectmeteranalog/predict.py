@@ -19,8 +19,12 @@ def predict(image):
 
     interpreter.allocate_tensors()
     input_index = interpreter.get_input_details()[0]["index"]
+    input_shape = interpreter.get_input_details()[0]["shape"]
+    
     output_index = interpreter.get_output_details()[0]["index"]
 
+    image = image.resize((input_shape[1], input_shape[2]))
+    
     interpreter.set_tensor(input_index, np.expand_dims(np.array(image).astype(np.float32), axis=0))
     # Run inference.
     interpreter.invoke()
