@@ -1,4 +1,4 @@
-# Readout edge AI digits from meters
+# Readout edge AI pointer from meters
 
 Help us to get more image data and improve your own analog pointer meter predictions!
 
@@ -25,8 +25,6 @@ Before you read out the images, have a look at
 
 Espessially for analog counter is to center the picture on the pointer.
 
-
-
 ### Read the images
 
 This is mostly the easiest part, if you have installed python on your computer. If not you need to install it ( <https://www.python.org/downloads/> ).
@@ -48,7 +46,7 @@ Now you can label the images. After reading the images it opens a window.
 
 You can see the counter and have to readjust the label. If it is correctly, you can click on update. If not use the slider to adjust it.
 
-The prediction on the left side can help you to identify the digit. But beware the model can be only a help for you. Don't trust the recognition!
+The prediction on the left side can help you to identify the number. But beware the model can be only a help for you. **Don't trust the recognition!**
 
 <img src="images/Labeling3.png" width="600">
 
@@ -72,7 +70,7 @@ You can keep the downloaded images with option --keepdownloads
 
     python3 -m collectermeteranalog --collect=<ip or servername> --keepdownloads
 
-If the labeling takes to long, you can later restart at a given digit
+If the labeling takes to long, you can later restart at a given number
 
     python3 -m collectermeteranalog --collect=<ip or servername> --nodownload --startlabel <number>
 
