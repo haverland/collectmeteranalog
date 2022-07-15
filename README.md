@@ -4,14 +4,14 @@ Help us to get more image data and improve your own analog pointer meter predict
 
 ## Setup your watermeter device
 
-Before you can read the images, you have to configure the logging of the digits in your device.
+Before you can read the images, you have to configure the logging of the pointers in your device.
 
 Go to you devices and open the configuration.
 ![Goto Configuration](images/Menu-Config.png)
 
 Now setup the *LogfileRetentionsInDays*. You have to select the checkbox if not already configured.
 
-Please do not change the path of *LogImageLocation* ( /log/digit )
+Please do not change the path of *LogImageLocation* ( /log/analog )
 
 ![Setup LogfileRetentionInDays](images/Config-Logimages.png)
 
