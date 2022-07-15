@@ -13,7 +13,7 @@ Now setup the *LogfileRetentionsInDays*. You have to select the checkbox if not 
 
 Please do not change the path of *LogImageLocation* ( /log/analog )
 
-![Setup LogfileRetentionInDays](images/Config-Logimages.png)
+![Setup LogfileRetentionInDays](images/Config-LogImages.png)
 
 If you had to enable the image logging, you need wait a few days before you can readout all the images.
 
