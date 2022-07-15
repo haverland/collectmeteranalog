@@ -4,7 +4,7 @@ import pkg_resources
 import math
 
 interpreter=None
-internal_model_path = pkg_resources.resource_filename('collectmeteranalog', 'models/ana0910s1_dropoutq.tflite')
+internal_model_path = pkg_resources.resource_filename('collectmeteranalog', 'models/ana_i32s100_dropout.tflite')
 
 def load_interpreter(model_path):
     global interpreter
