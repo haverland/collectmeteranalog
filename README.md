@@ -31,7 +31,7 @@ This is mostly the easiest part, if you have installed python on your computer. 
 
 Open a terminal and type in:
 
-    pip install git+https://github.com/haverland/collectermeteranalog
+    pip install git+https://github.com/haverland/collectmeteranalog
 
     python3 -m collectermeteranalog --collect=<your-esp32name> --days=3
 
