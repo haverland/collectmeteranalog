@@ -4,6 +4,7 @@ setup.py
 collectmeteranalog/__init__.py
 collectmeteranalog/__main__.py
 collectmeteranalog/collect.py
+collectmeteranalog/glob.py
 collectmeteranalog/hash_manual.py
 collectmeteranalog/labeling.py
 collectmeteranalog/predict.py

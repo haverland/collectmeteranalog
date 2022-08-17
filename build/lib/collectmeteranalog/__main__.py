@@ -3,6 +3,7 @@ import sys
 from collectmeteranalog.collect import collect
 from collectmeteranalog.labeling import label
 from collectmeteranalog.predict import load_interpreter
+from collectmeterdigits import glob
 
 
 def main():
@@ -25,6 +26,7 @@ def main():
     args = parser.parse_args()
 
     if (args.model!=None):
+        glob.model_path = args.model
         load_interpreter(args.model)
     
     if (args.labeling==''):
