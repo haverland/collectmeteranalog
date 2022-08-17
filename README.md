@@ -74,6 +74,11 @@ If the labeling takes to long, you can later restart at a given number
 
     python3 -m collectermeteranalog --collect=<ip or servername> --nodownload --startlabel <number>
 
+If another model should be used for prediction (ana-con, ana-class100)
+
+    python3 -m collectermeteranalog --collect=<ip or servername> --model=<modelpath.tflite>
+
+
 ### Ready to share
 
 After labeling you find the images under **"./data/labeled"**.
