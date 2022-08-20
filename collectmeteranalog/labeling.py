@@ -101,10 +101,15 @@ def label(path, startlabel=0, imageurlsfile=None):
     removeax = plt.axes([0.87, 0.4, 0.1, 0.04])
     bremove = Button(removeax, 'delete', hovercolor='0.975')
     
-    increaselabel = plt.axes([0.93, 0.1, 0.05, 0.04])
-    bincreaselabel = Button(increaselabel, '+0.1', hovercolor='0.975')
-    decreaselabel = plt.axes([0.87, 0.1, 0.05, 0.04])
-    bdecreaselabel = Button(decreaselabel, '-0.1', hovercolor='0.975')
+    increase0_1_label = plt.axes([0.93, 0.1, 0.05, 0.04])
+    bincrease0_1_label = Button(increase0_1_label, '+0.1', hovercolor='0.975')
+    increase1_label = plt.axes([0.93, 0.15, 0.05, 0.04])
+    bincrease1_label = Button(increase1_label, '+1.0', hovercolor='0.975')
+    
+    decrease0_1_label = plt.axes([0.87, 0.1, 0.05, 0.04])
+    bdecrease0_1_label = Button(decrease0_1_label, '-0.1', hovercolor='0.975')
+    decrease1_label = plt.axes([0.87, 0.15, 0.05, 0.04])
+    bdecrease1_label = Button(decrease1_label, '-1.0', hovercolor='0.975')
 
     def load_previous():
         global im
@@ -148,11 +153,17 @@ def label(path, startlabel=0, imageurlsfile=None):
         
         plt.draw()
 
-    def increase_label(event):
+    def increase0_1_label(event):
         slabel.set_val((slabel.val + 0.1) % 10)
 
-    def decrease_label(event):
+    def increase1_label(event):
+        slabel.set_val((slabel.val + 1) % 10)
+
+    def decrease0_1_label(event):
         slabel.set_val((slabel.val - 0.1) % 10)
+
+    def decrease1_label(event):
+        slabel.set_val((slabel.val - 1) % 10)
 
     def remove(event):
         global filename
@@ -178,15 +189,19 @@ def label(path, startlabel=0, imageurlsfile=None):
         load_next()
 
     def on_press(event):
-#        print('press', event.key)
+        #print('press', event.key)
         if event.key == 'right':
             next(event)
         if event.key == 'left':
             previous(event)
         if event.key == 'up':
-            increase_label(event);
+            increase0_1_label(event);
+        if event.key == 'pageup':
+            increase1_label(event);
         if event.key == 'down':
-            decrease_label(event)
+            decrease0_1_label(event)
+        if event.key == 'pagedown':
+            decrease1_label(event)
         if event.key == 'enter':
             next(event)
         if event.key == 'delete':
@@ -198,8 +213,10 @@ def label(path, startlabel=0, imageurlsfile=None):
     bnext.on_clicked(next)
     bprevious.on_clicked(previous)
     bremove.on_clicked(remove)
-    bincreaselabel.on_clicked(increase_label)
-    bdecreaselabel.on_clicked(decrease_label)
+    bincrease0_1_label.on_clicked(increase0_1_label)
+    bincrease1_label.on_clicked(increase1_label)
+    bdecrease0_1_label.on_clicked(decrease0_1_label)
+    bdecrease1_label.on_clicked(decrease1_label)
     plt.tight_layout()
     plt.show()
 
