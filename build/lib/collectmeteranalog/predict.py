@@ -11,11 +11,16 @@ internal_model_path = pkg_resources.resource_filename('collectmeteranalog', 'mod
 def load_interpreter(model_path):
     global interpreter
     print("Use model: " + model_path)
+    if (glob.model_path=="off"):
+        return
     interpreter = tf.lite.Interpreter(model_path=model_path)
     return interpreter
 
 def predict(image):
     global interpreter
+
+    if (glob.model_path=="off"):
+        return -1
 
     if interpreter==None:
         if glob.model_path==None:
