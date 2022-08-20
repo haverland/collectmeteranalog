@@ -33,7 +33,7 @@ Open a terminal and type in:
 
     pip install git+https://github.com/haverland/collectmeteranalog
 
-    python3 -m collectermeteranalog --collect=<your-esp32name> --days=3
+    python3 -m collectmeteranalog --collect=<your-esp32name> --days=3
 
 It downloads now all images in a "data" subfolder. The image names will be hashed for your privacy.
 Be patiant. It will takes a while.
@@ -56,27 +56,27 @@ After all images are labeled, the window closes automaticly.
 
 If you only want label images you can type:
 
-    python3 -m collectermeteranalog --labeling=\<path_to_your_images\>
+    python3 -m collectmeteranalog --labeling=\<path_to_your_images\>
 
 alternativly a list of files as cvs (index-column is used)
 
-    python3 -m collectermeteranalog --labelfile=\<path_to_your_file\>.csv
+    python3 -m collectmeteranalog --labelfile=\<path_to_your_file\>.csv
 
 or if you want remove similar images. The images must be stored in ./data/raw_images
 
-    python3 -m collectermeteranalog --collect=<ip or servername> --nodownload
+    python3 -m collectmeteranalog --collect=<ip or servername> --nodownload
 
 You can keep the downloaded images with option --keepdownloads
 
-    python3 -m collectermeteranalog --collect=<ip or servername> --keepdownloads
+    python3 -m collectmeteranalog --collect=<ip or servername> --keepdownloads
 
 If the labeling takes to long, you can later restart at a given number
 
-    python3 -m collectermeteranalog --collect=<ip or servername> --nodownload --startlabel <number>
+    python3 -m collectmeteranalog --collect=<ip or servername> --nodownload --startlabel <number>
 
 If another model should be used for prediction (ana-con, ana-class100)
 
-    python3 -m collectermeteranalog --collect=<ip or servername> --model=<modelpath.tflite>
+    python3 -m collectmeteranalog --collect=<ip or servername> --model=<modelpath.tflite>
 
 
 ### Ready to share
