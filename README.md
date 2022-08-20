@@ -44,7 +44,13 @@ After it the duplicates will be automaticly removed and finally you have a folde
 
 Now you can label the images. After reading the images it opens a window.
 
-You can see the counter and have to readjust the label. If it is correctly, you can click on update. If not use the slider to adjust it.
+You can see the counter and have to readjust the label.
+There are multiple ways to update the label:
+ - Press the `+1.0`, `+0.1`, `-1.0` or `-0.1` buttons on the right lower side.
+ - Use the `pageup`, `up`, `pagedown` or `down` keys.  
+ - Click onto the pointer on the plot
+
+If it is correctly, you can click on update. If not use the slider to adjust it.
 
 The prediction on the left side can help you to identify the number. But beware the model can be only a help for you. **Don't trust the recognition!**
 
