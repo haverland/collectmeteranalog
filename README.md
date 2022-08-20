@@ -54,7 +54,7 @@ There are multiple ways to update the label:
 If you using click option, beware that it set the ticks. But sometimes the ticks are not correct, because the image
 is moved or shared.
 
-![1.7 or 1.8?](images/ClickonTick.png)
+<img src="images/ClickonTick.png" width="600">
 
 This pointer is a 1.7. Look at the marks. The 1.5 is under Tick 1.6. So if you click it would label a 1.8. 
 We want label like a human would be read the pointer.
