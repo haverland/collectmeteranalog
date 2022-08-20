@@ -2,11 +2,11 @@ import tensorflow as tf
 import numpy as np
 import pkg_resources
 import math
-from collectmeterdigits import glob
+from collectmeteranalog import glob
 
 
 interpreter=None
-internal_model_path = pkg_resources.resource_filename('collectmeteranalog', 'models/ana_i32s100_dropout.tflite')
+internal_model_path = pkg_resources.resource_filename('collectmeteranalog', 'models/ana-class100_0120_s1_q.tflite')
 
 def load_interpreter(model_path):
     global interpreter

@@ -13,4 +13,4 @@ collectmeteranalog.egg-info/SOURCES.txt
 collectmeteranalog.egg-info/dependency_links.txt
 collectmeteranalog.egg-info/requires.txt
 collectmeteranalog.egg-info/top_level.txt
-collectmeteranalog/models/ana0910s1_dropoutq.tflite
+collectmeteranalog/models/ana-class100_0120_s1_q.tflite
