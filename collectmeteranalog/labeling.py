@@ -22,7 +22,7 @@ def ziffer_data_files(input_dir):
     return  imgfiles
 
 
-def label(path, startlabel=0, imageurlsfile=None):
+def label(path, startlabel=0, imageurlsfile=None, ticksteps=1):
     global filename
     global i
     global im
@@ -72,8 +72,8 @@ def label(path, startlabel=0, imageurlsfile=None):
     plt.setp(ax2.get_yticklabels(), visible=False)
    
     # set the circumference labels
-    ax2.set_xticks(np.linspace(0, 2*pi, 50, endpoint=False))
-    ax2.set_xticklabels(np.arange(0, 10, step=0.2).round(2),fontsize=7)
+    ax2.set_xticks(np.linspace(0, 2*pi, int(100/ticksteps), endpoint=False))
+    ax2.set_xticklabels(np.arange(0, 10, step=float(ticksteps)/10.0).round(2),fontsize=7)
     # Rotating the labels would be nice, but seems not to be trivial, see https://stackoverflow.com/questions/46719340/how-to-rotate-tick-labels-in-polar-matplotlib-plot
     
     #ax2.grid(False)

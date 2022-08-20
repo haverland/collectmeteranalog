@@ -17,6 +17,9 @@ def main():
     parser.add_argument('--savedublicates', action='store_true', help='Save the dublicates in an intermediate subdirectory in raw_images.')
     parser.add_argument('--labelfile', default=None, help='file with list of image urls if you want label specific images.')
     parser.add_argument('--model', default=None, help='model file path if a external model should be used or off if shoudl not be used')
+    parser.add_argument('--ticksteps',type=int, default=1, help='how often ticks shown 1=0.1 steps, 2=0.2 steps, max=5')
+
+
 
     # print help message if no argument is given
     if len(sys.argv)==1:
@@ -25,17 +28,20 @@ def main():
     
     args = parser.parse_args()
 
+    if (args.ticksteps<1 or args.ticksteps>5):
+        args.ticksteps = 1
+
     if (args.model!=None):
         glob.model_path = args.model
         load_interpreter(args.model)
     
     if (args.labeling==''):
         if (args.labelfile != None):
-            label(args.labeling, args.startlabel, args.labelfile)    
+            label(args.labeling, args.startlabel, args.labelfile, ticksteps=args.ticksteps)    
         else:
-            collect(args.collect, args.days, keepolddata=args.keepdownloads, download=not args.nodownload, startlabel=args.startlabel)
+            collect(args.collect, args.days, keepolddata=args.keepdownloads, download=not args.nodownload, startlabel=args.startlabel, ticksteps=args.ticksteps)
     else:
-        label(args.labeling, args.startlabel)    
+        label(args.labeling, args.startlabel, ticksteps=args.ticksteps)    
 
 if __name__ == '__main__':
     main()

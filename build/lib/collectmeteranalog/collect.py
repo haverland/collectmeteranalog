@@ -183,7 +183,7 @@ def move_to_label(files, meter):
        
 
 
-def collect(meter, days, keepolddata=False, download=True, startlabel=0, savedublicates=False):
+def collect(meter, days, keepolddata=False, download=True, startlabel=0, savedublicates=False, ticksteps=1):
     # ensure the target path exists
     os.makedirs(target_raw_path, exist_ok=True)
     print("Startlabel", startlabel)
@@ -203,6 +203,6 @@ def collect(meter, days, keepolddata=False, download=True, startlabel=0, savedub
         shutil.rmtree(target_raw_path)
 
     # label now
-    label(target_label_path, startlabel=startlabel)
+    label(target_label_path, startlabel=startlabel, ticksteps=ticksteps)
 
 

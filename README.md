@@ -58,6 +58,10 @@ If the GUI is slow, you can switch off the prediction of the internal neuronal m
 
     python3 -m collectmeteranalog --collect=<your-esp32name> --days=3 --model=off
 
+Sometimes the Labels on the ticks are to tight. You can change the ticks with
+
+    python3 -m collectmeteranalog --collect=<your-esp32name> --days=3 --ticksteps=2
+
 If you only want label images you can type:
 
     python3 -m collectmeteranalog --labeling=\<path_to_your_images\>
