@@ -2,7 +2,7 @@ import tensorflow as tf
 import numpy as np
 import pkg_resources
 import math
-from collectmeterdigits import glob
+from collectmeteranalog import glob
 
 
 interpreter=None
