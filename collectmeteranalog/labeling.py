@@ -226,9 +226,9 @@ def label(path, startlabel=0, imageurlsfile=None, ticksteps=1):
 
 
     def on_click(event):        
-        slabel.set_val(event.xdata / pi * 5) # event.xdata is directly in rad
+        slabel.set_val(round(event.xdata / pi * 5,1)) # event.xdata is directly in rad
         updatePlot()
-        print(event.xdata, slabel.val)
+        #print(event.xdata, slabel.val)
 
 
     fig.canvas.mpl_connect('key_press_event', on_press)
@@ -258,7 +258,11 @@ def load_image(files, i, startlabel = -1):
             target = base[0:3]
         else:
             target = base[0:1]
-        category = float(target)
+        
+        try:
+            category = float(target)
+        except:
+            category = 0
         if category >= startlabel:  
             break 
         else:

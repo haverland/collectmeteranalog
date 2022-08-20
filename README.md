@@ -45,10 +45,20 @@ After it the duplicates will be automaticly removed and finally you have a folde
 Now you can label the images. After reading the images it opens a window.
 
 You can see the counter and have to readjust the label.
+
 There are multiple ways to update the label:
- - Press the `+1.0`, `+0.1`, `-1.0` or `-0.1` buttons on the right lower side.
- - Use the `pageup`, `up`, `pagedown` or `down` keys.  
- - Click onto the pointer on the plot
+    - Press the `+1.0`, `+0.1`, `-1.0` or `-0.1` buttons on the right lower side.
+    - Use the `pageup`, `up`, `pagedown` or `down` keys.  
+    - Click onto the pointer on the plot
+
+If you using click option, beware that it set the ticks. But sometimes the ticks are not correct, because the image
+is moved or shared.
+
+![1.7 or 1.8?](images/ClickonTick.png)
+
+This pointer is a 1.7. Look at the marks. The 1.5 is under Tick 1.6. So if you click it would label a 1.8. 
+We want label like a human would be read the pointer.
+
 
 If it is correctly, you can click on update. If not use the slider to adjust it.
 
