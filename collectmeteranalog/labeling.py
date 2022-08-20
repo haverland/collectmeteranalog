@@ -95,6 +95,10 @@ def label(path, startlabel=0, imageurlsfile=None):
     slabel = Slider(axlabel, label='Label',valmin= 0.0, valmax=9.9, valstep=0.1, 
                     valinit=filelabel,
                     orientation='horizontal')
+    
+    # Show value in plot
+    plotedValue, = ax2.plot([0, 2*pi * slabel.val / 10], [0, 2])    
+    
     previousax = plt.axes([0.87, 0.225, 0.1, 0.04])
     bprevious = Button(previousax, 'previous', hovercolor='0.975')
     nextax = plt.axes([0.87, 0.025, 0.1, 0.04])
@@ -129,6 +133,7 @@ def label(path, startlabel=0, imageurlsfile=None):
         fig = plt.gcf()
         fig.canvas.manager.set_window_title(str(i) + ' of ' + str(len(files)) + ' images')
         predbox.set_val("{:.1f}".format(predict(img)))
+        updatePlot()
         plt.draw()
 
 
@@ -151,20 +156,30 @@ def label(path, startlabel=0, imageurlsfile=None):
         fig = plt.gcf()
         fig.canvas.manager.set_window_title(str(i) + ' of ' + str(len(files)) + ' images')
         predbox.set_val("Pred.:\n{:.1f}".format(predict(img)))
+        updatePlot()
         
         plt.draw()
 
+    def updatePlot():        
+        plotedValue.set_xdata([0, 2*pi * slabel.val / 10])        
+        fig.canvas.draw()
+        fig.canvas.flush_events()
+
     def increase0_1_label(event):
         slabel.set_val((slabel.val + 0.1) % 10)
+        updatePlot()
 
     def increase1_label(event):
         slabel.set_val((slabel.val + 1) % 10)
+        updatePlot()
 
     def decrease0_1_label(event):
         slabel.set_val((slabel.val - 0.1) % 10)
+        updatePlot()
 
     def decrease1_label(event):
         slabel.set_val((slabel.val - 1) % 10)
+        updatePlot()
 
     def remove(event):
         global filename
