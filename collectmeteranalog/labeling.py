@@ -223,6 +223,14 @@ def label(path, startlabel=0, imageurlsfile=None, ticksteps=1):
         if event.key == 'delete':
             remove(event)
 
+
+
+    def on_click(event):        
+        slabel.set_val(event.xdata / pi * 5) # event.xdata is directly in rad
+        updatePlot()
+        print(event.xdata, slabel.val)
+
+
     fig.canvas.mpl_connect('key_press_event', on_press)
     
     
@@ -234,10 +242,11 @@ def label(path, startlabel=0, imageurlsfile=None, ticksteps=1):
     bdecrease0_1_label.on_clicked(decrease0_1_label)
     bdecrease1_label.on_clicked(decrease1_label)
     plt.tight_layout()
+    
+    plt.connect('button_press_event', on_click)
+    
     plt.show()
 
-    
-        
 
 
 def load_image(files, i, startlabel = -1):
