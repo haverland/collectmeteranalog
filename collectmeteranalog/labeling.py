@@ -1,3 +1,4 @@
+from glob import glob
 import os
 from PIL import Image
 import matplotlib
@@ -28,9 +29,11 @@ def label(path, startlabel=0, imageurlsfile=None, ticksteps=1):
     global im
     global filelabel
     global ax
+    global ax2
     global slabel
     global files
     global predbox
+    global plotedValue
 
     print(f"Startlabel", startlabel)
 
@@ -95,7 +98,7 @@ def label(path, startlabel=0, imageurlsfile=None, ticksteps=1):
                     orientation='horizontal')
     
     # Show value in plot
-    plotedValue, = ax2.plot([0, 2*pi * slabel.val / 10], [0, 2], 'g', linewidth=5)    
+    plotedValue, = ax2.plot([0, 2*pi * filelabel / 10], [0, 2], 'g', linewidth=5)    
     
     previousax = plt.axes([0.87, 0.225, 0.1, 0.04])
     bprevious = Button(previousax, 'previous', hovercolor='0.975')
@@ -116,7 +119,6 @@ def label(path, startlabel=0, imageurlsfile=None, ticksteps=1):
 
     def load_previous():
         global im
-        global slabel
         global i
         global filelabel
         global filename
@@ -135,7 +137,6 @@ def label(path, startlabel=0, imageurlsfile=None, ticksteps=1):
 
     def load_next(increaseindex = True):
         global im
-        global slabel
         global i
         global filelabel
         global filename
@@ -154,25 +155,39 @@ def label(path, startlabel=0, imageurlsfile=None, ticksteps=1):
         
         plt.draw()
 
-    def updatePlot():        
-        plotedValue.set_xdata([0, 2*pi * slabel.val / 10])        
+    def updatePlot():   
+        global filelabel
+        global plotedValue
+        plotedValue.set_xdata([0, 2*pi * filelabel / 10])        
         fig.canvas.draw()
-        fig.canvas.flush_events()
+        #fig.canvas.flush_events()
 
     def increase0_1_label(event):
-        slabel.set_val((slabel.val + 0.1) % 10)
+        global filelabel
+        
+        filelabel = (filelabel + 0.1) % 10
+        slabel.set_val(filelabel)
         updatePlot()
+        
 
     def increase1_label(event):
-        slabel.set_val((slabel.val + 1) % 10)
+        global filelabel
+        filelabel = (filelabel + 1) % 10
+        slabel.set_val(filelabel)
         updatePlot()
 
     def decrease0_1_label(event):
-        slabel.set_val((slabel.val - 0.1) % 10)
+        global filelabel
+
+        filelabel = (filelabel - 0.1) % 10
+        slabel.set_val(filelabel)
         updatePlot()
 
     def decrease1_label(event):
-        slabel.set_val((slabel.val - 1) % 10)
+        global filelabel
+
+        filelabel = (filelabel - 1) % 10
+        slabel.set_val(filelabel)
         updatePlot()
 
     def remove(event):
@@ -192,8 +207,8 @@ def label(path, startlabel=0, imageurlsfile=None, ticksteps=1):
         
         basename = os.path.basename(filename).split('_', 1)
         basename = basename[-1]
-        if (filelabel != slabel.val):
-            _zw = os.path.join(os.path.dirname(filename), "{:.1f}".format(slabel.val) + "_" + basename)
+        _zw = os.path.join(os.path.dirname(filename), "{:.1f}".format(filelabel) + "_" + basename)
+        if (filename != _zw):
             files[i] = _zw
             shutil.move(filename, _zw)
         load_next()
@@ -219,8 +234,14 @@ def label(path, startlabel=0, imageurlsfile=None, ticksteps=1):
 
 
 
-    def on_click(event):        
-        slabel.set_val(round(event.xdata / pi * 5,1)) # event.xdata is directly in rad
+    def on_click(event):  
+        global slabel      
+        global filelabel
+        global ax2
+        if event.inaxes != ax2:
+            return
+        filelabel = round(event.xdata / pi * 5,1)
+        slabel.set_val(filelabel) # event.xdata is directly in rad
         updatePlot()
         #print(event.xdata, slabel.val)
 
@@ -237,7 +258,8 @@ def label(path, startlabel=0, imageurlsfile=None, ticksteps=1):
     bdecrease1_label.on_clicked(decrease1_label)
     plt.tight_layout()
     
-    plt.connect('button_press_event', on_click)
+    fig.canvas.mpl_connect('button_press_event', on_click)
+    #plt.connect('button_press_event', on_click)
 
     # Maximize window
     # See https://stackoverflow.com/questions/12439588/how-to-maximize-a-plt-show-window-using-python
