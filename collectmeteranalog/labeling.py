@@ -131,7 +131,7 @@ def label(path, startlabel=0, imageurlsfile=None, ticksteps=1):
         title.set_text(filelabel)
         slabel.set_val(filelabel)
         fig = plt.gcf()
-        fig.canvas.manager.set_window_title(str(i) + ' of ' + str(len(files)) + ' images')
+        fig.canvas.manager.set_window_title(str(i+1) + ' of ' + str(len(files)) + ' images')
         predbox.set_val("{:.1f}".format(predict(img)))
         updatePlot()
         plt.draw()
@@ -154,7 +154,7 @@ def label(path, startlabel=0, imageurlsfile=None, ticksteps=1):
         title.set_text(filelabel)
         slabel.set_val(filelabel)
         fig = plt.gcf()
-        fig.canvas.manager.set_window_title(str(i) + ' of ' + str(len(files)) + ' images')
+        fig.canvas.manager.set_window_title(str(i+1) + ' of ' + str(len(files)) + ' images')
         predbox.set_val("Pred.:\n{:.1f}".format(predict(img)))
         updatePlot()
         
