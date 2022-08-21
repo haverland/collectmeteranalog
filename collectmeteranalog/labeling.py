@@ -27,7 +27,6 @@ def label(path, startlabel=0, imageurlsfile=None, ticksteps=1):
     global i
     global im
     global filelabel
-    global title
     global ax
     global slabel
     global files
@@ -60,7 +59,6 @@ def label(path, startlabel=0, imageurlsfile=None, ticksteps=1):
     ax0 = fig.add_subplot(111)
     ax0.axis("off")
 
-    title = plt.title(str(filelabel)+ "\n\n")  # set title
     #plt.polar()
     #plt.yticks(np.arange(0, 1, step=0.1))
     
@@ -118,7 +116,6 @@ def label(path, startlabel=0, imageurlsfile=None, ticksteps=1):
 
     def load_previous():
         global im
-        global title
         global slabel
         global i
         global filelabel
@@ -128,7 +125,6 @@ def label(path, startlabel=0, imageurlsfile=None, ticksteps=1):
         i = (i - 1) % len(files)
         img, filelabel, filename, i = load_image(files, i)
         im.set_data(img)
-        title.set_text(filelabel)
         slabel.set_val(filelabel)
         fig = plt.gcf()
         fig.canvas.manager.set_window_title(str(i+1) + ' of ' + str(len(files)) + ' images')
@@ -139,7 +135,6 @@ def label(path, startlabel=0, imageurlsfile=None, ticksteps=1):
 
     def load_next(increaseindex = True):
         global im
-        global title
         global slabel
         global i
         global filelabel
@@ -151,7 +146,6 @@ def label(path, startlabel=0, imageurlsfile=None, ticksteps=1):
         
         img, filelabel, filename, i = load_image(files, i)
         im.set_data(img)
-        title.set_text(filelabel)
         slabel.set_val(filelabel)
         fig = plt.gcf()
         fig.canvas.manager.set_window_title(str(i+1) + ' of ' + str(len(files)) + ' images')
