@@ -55,7 +55,7 @@ def label(path, startlabel=0, imageurlsfile=None, ticksteps=1):
  
     # set window title
     fig = plt.gcf()
-    fig.set_dpi(300)
+    
     fig.canvas.manager.set_window_title('1 of ' + str(len(files)) + ' images')
     ax0 = fig.add_subplot(111)
     ax0.axis("off")
@@ -97,7 +97,7 @@ def label(path, startlabel=0, imageurlsfile=None, ticksteps=1):
                     orientation='horizontal')
     
     # Show value in plot
-    plotedValue, = ax2.plot([0, 2*pi * slabel.val / 10], [0, 2])    
+    plotedValue, = ax2.plot([0, 2*pi * slabel.val / 10], [0, 2], 'g', linewidth=5)    
     
     previousax = plt.axes([0.87, 0.225, 0.1, 0.04])
     bprevious = Button(previousax, 'previous', hovercolor='0.975')
@@ -244,7 +244,23 @@ def label(path, startlabel=0, imageurlsfile=None, ticksteps=1):
     plt.tight_layout()
     
     plt.connect('button_press_event', on_click)
-    
+
+    # Maximize window
+    # See https://stackoverflow.com/questions/12439588/how-to-maximize-a-plt-show-window-using-python
+    def maximize():
+        backend = str(plt.get_backend())
+        mgr = plt.get_current_fig_manager()
+        if backend == 'TkAgg':
+            if os.name == 'nt':
+                mgr.window.state('zoomed')
+            else:
+                mgr.resize(*mgr.window.maxsize())
+        elif backend == 'wxAgg':
+            mgr.frame.Maximize(True)
+        elif backend == 'Qt4Agg':
+            mgr.window.showMaximized()
+            
+    maximize()
     plt.show()
 
 
