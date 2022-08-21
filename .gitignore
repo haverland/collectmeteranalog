@@ -3,4 +3,4 @@
 .vscode/
 .code-workspace
 data/
-build/
+*.DS_Store
