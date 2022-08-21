@@ -132,7 +132,7 @@ def label(path, startlabel=0, imageurlsfile=None, ticksteps=1):
         fig.canvas.manager.set_window_title(str(i+1) + ' of ' + str(len(files)) + ' images')
         predbox.set_val("{:.1f}".format(predict(img)))
         updatePlot()
-        plt.draw()
+        plt.draw_idle()
 
 
     def load_next(increaseindex = True):
@@ -153,13 +153,12 @@ def label(path, startlabel=0, imageurlsfile=None, ticksteps=1):
         predbox.set_val("Pred.:\n{:.1f}".format(predict(img)))
         updatePlot()
         
-        plt.draw()
+        plt.draw_idle()
 
     def updatePlot():   
-        global filelabel
-        global plotedValue
+        
         plotedValue.set_xdata([0, 2*pi * filelabel / 10])        
-        fig.canvas.draw()
+        fig.canvas.draw_idle()
         #fig.canvas.flush_events()
 
     def increase0_1_label(event):
@@ -240,7 +239,10 @@ def label(path, startlabel=0, imageurlsfile=None, ticksteps=1):
         global ax2
         if event.inaxes != ax2:
             return
-        filelabel = round(event.xdata / pi * 5,1)
+
+        #print(event.xdata, (round(event.xdata*10 / (2*pi), 1)+ 10) %10, event.xdata+2*pi-pi/2, slabel.val)
+        filelabel = (round(event.xdata*10 / (2*pi), 1)+ 10) %10
+        
         slabel.set_val(filelabel) # event.xdata is directly in rad
         updatePlot()
         #print(event.xdata, slabel.val)
