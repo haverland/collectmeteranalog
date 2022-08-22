@@ -127,12 +127,12 @@ def label(path, startlabel=0, imageurlsfile=None, ticksteps=1):
         i = (i - 1) % len(files)
         img, filelabel, filename, i = load_image(files, i)
         im.set_data(img)
+        plotedValue.set_xdata([0, 2*pi * filelabel / 10])        
         slabel.set_val(filelabel)
         fig = plt.gcf()
         fig.canvas.manager.set_window_title(str(i+1) + ' of ' + str(len(files)) + ' images')
         predbox.set_val("{:.1f}".format(predict(img)))
-        updatePlot()
-        plt.draw_idle()
+        
 
 
     def load_next(increaseindex = True):
@@ -147,18 +147,19 @@ def label(path, startlabel=0, imageurlsfile=None, ticksteps=1):
         
         img, filelabel, filename, i = load_image(files, i)
         im.set_data(img)
+        plotedValue.set_xdata([0, 2*pi * filelabel / 10])        
         slabel.set_val(filelabel)
         fig = plt.gcf()
         fig.canvas.manager.set_window_title(str(i+1) + ' of ' + str(len(files)) + ' images')
         predbox.set_val("Pred.:\n{:.1f}".format(predict(img)))
+        
         updatePlot()
         
-        plt.draw_idle()
 
     def updatePlot():   
         
         plotedValue.set_xdata([0, 2*pi * filelabel / 10])        
-        fig.canvas.draw_idle()
+        #fig.canvas.draw_idle()
         #fig.canvas.flush_events()
 
     def increase0_1_label(event):
