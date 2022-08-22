@@ -74,10 +74,12 @@ def label(path, startlabel=0, imageurlsfile=None, ticksteps=1):
    
     # set the circumference labels
     ax2.set_xticks(np.linspace(0, 2*pi, int(100/ticksteps), endpoint=False))
-    ax2.set_xticklabels(np.arange(0, 10, step=float(ticksteps)/10.0).round(2),fontsize=7)
+    # ax2.set_xticklabels(np.arange(0, 10, step=float(ticksteps)/10.0).round(2),fontsize=7)
+    ax2.get_yaxis().set_visible(False)
+    ax2.get_xaxis().set_visible(False)
     # Rotating the labels would be nice, but seems not to be trivial, see https://stackoverflow.com/questions/46719340/how-to-rotate-tick-labels-in-polar-matplotlib-plot
     
-    #ax2.grid(False)
+    ax2.grid(False)
     #ax2.grid(linewidth=2, drawstyle='steps-post')
     # make the labels go clockwise
     ax2.set_theta_direction(-1)
