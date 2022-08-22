@@ -122,7 +122,7 @@ def label(path, startlabel=0, imageurlsfile=None, ticksteps=1):
     decrease1_label = plt.axes([0.87, 0.15, 0.05, 0.04])
     bdecrease1_label = Button(decrease1_label, '-1.0', hovercolor='0.975')
 
-    toggle_grid_label = plt.axes([0.87, 0.95, 0.05, 0.04])
+    toggle_grid_label = plt.axes([0.87, 0.95, 0.1, 0.04])
     toggle_grid_btn = Button(toggle_grid_label, 'grid', hovercolor='0.975')
 
     def load_previous():
@@ -167,7 +167,7 @@ def label(path, startlabel=0, imageurlsfile=None, ticksteps=1):
     def updatePlot():   
         
         plotedValue.set_xdata([0, 2*pi * filelabel / 10])  
-        plt.pause(0.2)
+        plt.pause(0.1)
         #fig.canvas.draw()
         #fig.canvas.flush_events()
 
@@ -210,7 +210,7 @@ def label(path, startlabel=0, imageurlsfile=None, ticksteps=1):
     def previous(event):
         load_previous()
 
-    def next(event):
+    def l_next(event):
         global filelabel
         global filename
         
@@ -225,7 +225,7 @@ def label(path, startlabel=0, imageurlsfile=None, ticksteps=1):
     def on_press(event):
         #print('press', event.key)
         if event.key == 'right':
-            next(event)
+            l_next(event)
         if event.key == 'left':
             previous(event)
         if event.key == 'up':
@@ -237,7 +237,7 @@ def label(path, startlabel=0, imageurlsfile=None, ticksteps=1):
         if event.key == 'pagedown':
             decrease1_label(event)
         if event.key == 'enter':
-            next(event)
+            l_next(event)
         if event.key == 'delete':
             remove(event)
 
@@ -278,7 +278,7 @@ def label(path, startlabel=0, imageurlsfile=None, ticksteps=1):
     fig.canvas.mpl_connect('key_press_event', on_press)
     
     
-    bnext.on_clicked(next)
+    bnext.on_clicked(l_next)
     bprevious.on_clicked(previous)
     bremove.on_clicked(remove)
     bincrease0_1_label.on_clicked(increase0_1_label)
