@@ -14,10 +14,10 @@ import numpy as np
 
 
 
-target_path = "./data"                   # root data path
-target_raw_path =  "./data/raw_images"   # here all raw images will be stored
-target_label_path = "./data/labeled"
-target_store_dublicates = "./data/raw_images/dublicates"
+target_path = "data"                   # root data path
+target_raw_path =  "data/raw_images"   # here all raw images will be stored
+target_label_path = "data/labeled"
+target_store_dublicates = "data/raw_images/dublicates"
 
 
 def yesterday(daysbefore=1):
@@ -130,8 +130,8 @@ def remove_similar_images(image_filenames, meter, hashfunc = imagehash.average_h
             continue
         images.append([hash, img, meter, datum])
   
-    if (os.path.exists('./data/HistoricHashData.txt')):
-        HistoricHashData = load_hash_file('./data/HistoricHashData.txt')
+    if (os.path.exists('data/HistoricHashData.txt')):
+        HistoricHashData = load_hash_file('data/HistoricHashData.txt')
     else:
         HistoricHashData = []
 
@@ -161,7 +161,7 @@ def remove_similar_images(image_filenames, meter, hashfunc = imagehash.average_h
     for _image in images:
         if not _image[1] in duplicates:
             HistoricHashData.append(_image)
-    save_hash_file(HistoricHashData, './data/HistoricHashData.txt')
+    save_hash_file(HistoricHashData, 'data/HistoricHashData.txt')
             
     # remove now all duplicates
     if savedublicates:

@@ -19,8 +19,8 @@ def calculate_hash(image_filenames, meter, hashfunc = imagehash.average_hash):
     return images;
 
 
-input_dir = "./data/labeled_20220606"
-hashfilename = "./data/HistoricHashData.txt"
+input_dir = "data/labeled_20220606"
+hashfilename = "data/HistoricHashData.txt"
 
 image_filenames = ziffer_data_files(input_dir)
 hash = calculate_hash(image_filenames, "hash_manual")

@@ -12,7 +12,7 @@ Classifier: Programming Language :: Python
 Classifier: Development Status :: 4 - Beta
 Classifier: Natural Language :: English
 Classifier: Intended Audience :: Developers
-Classifier: Operating System :: Linux
+Classifier: Operating System :: OS Independent
 Classifier: Topic :: Software Development :: Libraries :: Application Frameworks
 Classifier: Topic :: Internet :: WWW/HTTP :: Dynamic Content
 License-File: LICENSE
@@ -23,4 +23,3 @@ License-File: LICENSE
     The images will be anonymized (name replaced with hash).
     At last step, the images will be pre labeled by a neuronal network
     
-

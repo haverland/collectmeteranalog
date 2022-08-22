@@ -7,3 +7,7 @@ imagehash
 urllib3
 requests
 tflite
+requests
+
+[:python_version == "3.9"]
+importlib-metadata

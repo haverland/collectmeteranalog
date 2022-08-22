@@ -86,7 +86,7 @@ alternativly a list of files as cvs (index-column is used)
 
     python3 -m collectmeteranalog --labelfile=\<path_to_your_file\>.csv
 
-or if you want remove similar images. The images must be stored in ./data/raw_images
+or if you want remove similar images. The images must be stored in data/raw_images
 
     python3 -m collectmeteranalog --collect=<ip or servername> --nodownload
 
@@ -105,6 +105,6 @@ If another model should be used for prediction (ana-con, ana-class100)
 
 ### Ready to share
 
-After labeling you find the images under **"./data/labeled"**.
+After labeling you find the images under **"data/labeled"**.
 
 Zip the folder. If it is smaller than 2MB you can mail it to iotson(at)t-online.de. Else please contact us, to find a other way.
