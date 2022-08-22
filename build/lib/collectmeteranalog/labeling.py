@@ -34,6 +34,11 @@ def label(path, startlabel=0, imageurlsfile=None, ticksteps=1):
     global files
     global predbox
     global plotedValue
+    global usegrid 
+    global ticksteps_s
+
+    ticksteps_s = ticksteps
+    usegrid = True
 
     print(f"Startlabel", startlabel)
 
@@ -117,6 +122,9 @@ def label(path, startlabel=0, imageurlsfile=None, ticksteps=1):
     decrease1_label = plt.axes([0.87, 0.15, 0.05, 0.04])
     bdecrease1_label = Button(decrease1_label, '-1.0', hovercolor='0.975')
 
+    toggle_grid_label = plt.axes([0.87, 0.95, 0.05, 0.04])
+    toggle_grid_btn = Button(toggle_grid_label, 'grid', hovercolor='0.975')
+
     def load_previous():
         global im
         global i
@@ -158,8 +166,9 @@ def label(path, startlabel=0, imageurlsfile=None, ticksteps=1):
 
     def updatePlot():   
         
-        plotedValue.set_xdata([0, 2*pi * filelabel / 10])        
-        #fig.canvas.draw_idle()
+        plotedValue.set_xdata([0, 2*pi * filelabel / 10])  
+        plt.pause(0.2)
+        #fig.canvas.draw()
         #fig.canvas.flush_events()
 
     def increase0_1_label(event):
@@ -248,6 +257,23 @@ def label(path, startlabel=0, imageurlsfile=None, ticksteps=1):
         updatePlot()
         #print(event.xdata, slabel.val)
 
+    def on_toggle_grid(event):  
+        global ax2
+        global usegrid
+        usegrid = not usegrid
+        ax2.grid(usegrid)
+
+        if (usegrid):
+            ax2.set_xticks(np.linspace(0, 2*pi, int(100/ticksteps_s), endpoint=False))
+            ax2.set_xticklabels(np.arange(0, 10, step=float(ticksteps_s)/10.0).round(2),fontsize=7)
+        else:
+            ax2.set_xticks([])
+            ax2.set_xticklabels([])
+        plt.draw()
+        #plt.pause(0.0001)
+        #plt.clf()
+    
+
 
     fig.canvas.mpl_connect('key_press_event', on_press)
     
@@ -259,7 +285,8 @@ def label(path, startlabel=0, imageurlsfile=None, ticksteps=1):
     bincrease1_label.on_clicked(increase1_label)
     bdecrease0_1_label.on_clicked(decrease0_1_label)
     bdecrease1_label.on_clicked(decrease1_label)
-    plt.tight_layout()
+    toggle_grid_btn.on_clicked(on_toggle_grid)
+    #plt.tight_layout()
     
     fig.canvas.mpl_connect('button_press_event', on_click)
     #plt.connect('button_press_event', on_click)
