@@ -4,3 +4,6 @@
 .code-workspace
 data/
 *.DS_Store
+.DS_Store
+build/
+collectmeteranalog/__pycache__
