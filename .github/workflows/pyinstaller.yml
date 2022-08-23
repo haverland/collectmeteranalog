@@ -19,6 +19,9 @@ jobs:
       with:
         path: .
 
+    - name: Group of log lines
+        run: | 
+            ls dist/windows
     - uses: actions/upload-artifact@v2
       with:
         name: collectmeteranalog
