@@ -8,7 +8,7 @@ a = Analysis(
     ['collectmeteranalog/__main__.py'],
     pathex=[],
     binaries=[],
-    datas=[('collectmeteranalog/models/*.tflite')],
+    datas=[('collectmeteranalog/models/*.tflite', 'models')],
     hiddenimports=[],
     hookspath=[],
     runtime_hooks=[],
@@ -41,13 +41,13 @@ exe = EXE(
     codesign_identity=None,
     entitlements_file=None,
 )
-coll = COLLECT(
-    exe,
-    a.binaries,
-    a.zipfiles,
-    a.datas,
-    strip=False,
-    upx=True,
-    upx_exclude=[],
-    name='collectmeteranalog',
-)
+#coll = COLLECT(
+#    exe,
+#    a.binaries,
+#    a.zipfiles,
+#    a.datas,
+#    strip=False,
+#    upx=True,
+#    upx_exclude=[],
+#    name='collectmeteranalog',
+#)
