@@ -34,7 +34,6 @@ setup(
                     'urllib3',
                     'requests',
                     'tflite',
-                    'requests',
                     'importlib-metadata; python_version == "3.9"'],
     tests_require=['nose'],
     packages=find_packages(exclude=['tests']),
