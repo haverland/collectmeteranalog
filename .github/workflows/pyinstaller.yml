@@ -18,9 +18,7 @@ jobs:
       uses: JackMcKew/pyinstaller-action-windows@main
       with:
         path: .
-
-    - run: ls dist/windows
-
+        
     - uses: actions/upload-artifact@v2
       with:
         name: collectmeteranalog
