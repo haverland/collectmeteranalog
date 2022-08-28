@@ -63,6 +63,9 @@ We want label like a human would be read the pointer.
 If it is correctly, you can click on update. If not use the slider to adjust it.
 
 The prediction on the left side can help you to identify the number. But beware the model can be only a help for you. **Don't trust the recognition!**
+On mac the prediction is not available. It shows everytime a -1. You can manually install it by 
+
+    pip install tensorflow-macos
 
 <img src="images/Labeling3.png" width="600">
 

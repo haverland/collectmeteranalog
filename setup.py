@@ -33,7 +33,7 @@ setup(
                     'imagehash',
                     'urllib3',
                     'requests',
-                    'tflite',
+                    'tflite-runtime; sys_platform != "darwin"',
                     'importlib-metadata; python_version == "3.9"'],
     tests_require=['nose'],
     packages=find_packages(exclude=['tests']),

@@ -1,4 +1,12 @@
-import tensorflow as tf
+try:
+    import tflite_runtime.interpreter as tflite
+    has_tflite_runtime = True
+except ImportError:
+    try:
+        import tensorflow.lite as tflite
+        has_tflite_runtime = True
+    except ImportError:
+        has_tflite_runtime = False
 import numpy as np
 import pkg_resources
 import math
@@ -13,13 +21,13 @@ def load_interpreter(model_path):
     print("Use model: " + model_path)
     if (glob.model_path=="off"):
         return
-    interpreter = tf.lite.Interpreter(model_path=model_path)
+    interpreter = tflite.Interpreter(model_path=model_path)
     return interpreter
 
 def predict(image):
     global interpreter
 
-    if (glob.model_path=="off"):
+    if (glob.model_path=="off" or has_tflite_runtime==False):
         return -1
 
     if interpreter==None:
