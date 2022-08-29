@@ -8,9 +8,6 @@ on:
 
 jobs:
   build:
-    steps:
-    - uses: actions/checkout@v2
-
     name: Build Executables
     runs-on: ${{ matrix.os }}
     strategy:
