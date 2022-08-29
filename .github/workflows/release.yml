@@ -76,11 +76,6 @@ jobs:
       - name: Post-Build for ${{ matrix.os }}
         if: ${{ matrix.POST_BUILD_CMD != '' }}
         run: ${{ matrix.POST_BUILD_CMD }}
-      - name: Upload Artifact for ItchIO Uploader
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{runner.os}}
-          path: ./dist/${{ matrix.OUT_FILE_NAME }}
       - name: Upload release assets
         uses: actions/upload-release-asset@v1
         env:
