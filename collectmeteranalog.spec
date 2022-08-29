@@ -5,7 +5,7 @@ block_cipher = None
 
 
 a = Analysis(
-    ['collectmeteranalog'],
+    ['collectmeteranalog/__main__.py'],
     pathex=[],
     binaries=[],
     datas=[],
