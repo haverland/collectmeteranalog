@@ -28,7 +28,6 @@ Espessially for analog counter is to center the picture on the pointer.
 ### Read the images
 
 
-
 #### Install collectmeteranalog
 
 The [releases](https://github.com/haverland/collectmeteranalog/releases) contains downloads for Windows, Linux and MacOS. But the prefered install is via python's pip.
@@ -67,10 +66,10 @@ The executables are console applications. You can use it like python
     Linux-collectmeteranalog --collect=<your-esp32name> --days=3
 or
 
-    macOS-collectmeteranalog --collect=<your-esp32name> --days=3
+    collectmeteranalog --collect=<your-esp32name> --days=3
 
 Windows and MacOS excecutables have no prediction, because the tflite-runtime is only available for linux and the complete tensorflow library is to big (600MB) for a single application.
-
+ 
 
 ### Label the images
 
