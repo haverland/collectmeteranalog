@@ -27,11 +27,28 @@ Espessially for analog counter is to center the picture on the pointer.
 
 ### Read the images
 
+
+
+#### Install collectmeteranalog
+
+The [releases](https://github.com/haverland/collectmeteranalog/releases) contains downloads for Windows, Linux and MacOS. But the prefered install is via python's pip.
+
+##### Python
+
 This is mostly the easiest part, if you have installed python on your computer. If not you need to install it ( <https://www.python.org/downloads/> ).
 
 Open a terminal and type in:
 
     pip install git+https://github.com/haverland/collectmeteranalog
+
+On mac and windows the prediction is not available. It shows everytime a -1. You can manually install it by 
+
+    pip install tensorflow-macos 
+or
+
+    pip install tensorflow
+
+The application is called via console
 
     python3 -m collectmeteranalog --collect=<your-esp32name> --days=3
 
@@ -39,6 +56,21 @@ It downloads now all images in a "data" subfolder. The image names will be hashe
 Be patiant. It will takes a while.
 
 After it the duplicates will be automaticly removed and finally you have a folder named data/labled with the images.
+
+##### Windows, MacOS, Linux
+
+The executables are console applications. You can use it like python
+
+    Windows-collectmeteranalog.exe --collect=<your-esp32name> --days=3
+,
+
+    Linux-collectmeteranalog --collect=<your-esp32name> --days=3
+or
+
+    macOS-collectmeteranalog --collect=<your-esp32name> --days=3
+
+Windows and MacOS excecutables have no prediction, because the tflite-runtime is only available for linux and the complete tensorflow library is to big (600MB) for a single application.
+
 
 ### Label the images
 
@@ -63,9 +95,6 @@ We want label like a human would be read the pointer.
 If it is correctly, you can click on update. If not use the slider to adjust it.
 
 The prediction on the left side can help you to identify the number. But beware the model can be only a help for you. **Don't trust the recognition!**
-On mac the prediction is not available. It shows everytime a -1. You can manually install it by 
-
-    pip install tensorflow-macos
 
 <img src="images/Labeling3.png" width="600">
 
