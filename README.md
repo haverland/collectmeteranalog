@@ -67,7 +67,7 @@ The executables are console applications. You can use it like python
     Linux-collectmeteranalog --collect=<your-esp32name> --days=3
 or
 
-    macOS-collectmeteranalog --collect=<your-esp32name> --days=3
+    collectmeteranalog --collect=<your-esp32name> --days=3
 
 Windows and MacOS excecutables have no prediction, because the tflite-runtime is only available for linux and the complete tensorflow library is to big (600MB) for a single application.
 
