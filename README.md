@@ -28,7 +28,6 @@ Espessially for analog counter is to center the picture on the pointer.
 ### Read the images
 
 
-
 #### Install collectmeteranalog
 
 The [releases](https://github.com/haverland/collectmeteranalog/releases) contains downloads for Windows, Linux and MacOS. But the prefered install is via python's pip.
