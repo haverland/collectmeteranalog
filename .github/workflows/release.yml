@@ -54,6 +54,6 @@ jobs:
       - name: Upload created build on action
         uses: actions/upload-artifact@v3
         with:
-          name: './dist/${{matrix.OUT_FILE_NAME}}'
-          path: '${{runner.os}}-${{matrix.OUT_FILE_NAME}}'
+          path: './dist/${{matrix.OUT_FILE_NAME}}'
+          name: '${{runner.os}}-${{matrix.OUT_FILE_NAME}}'
  
