@@ -13,6 +13,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - changed release action
-- fixed requirements 
+- fixed requirements
 
 ### Removed
