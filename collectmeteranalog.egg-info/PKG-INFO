@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: collectmeteranalog
-Version: 0.1.0
+Version: 1.0.0
 Summary: Reads images from water meter pointers.
 Home-page: https://github.com/haverland/collectmeteranalog
 Author: Frank Haverland

@@ -6,8 +6,10 @@ scikit-learn
 imagehash
 urllib3
 requests
-tflite
-requests
+pandas
 
 [:python_version == "3.9"]
 importlib-metadata
+
+[:sys_platform == "linux"]
+tflite-runtime
