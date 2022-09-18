@@ -1,9 +1,6 @@
 name: 'Build'
 on:
   push:
-    tags:
-      - 'v*'
-      - 'beta-v*'
 
 jobs:
   
@@ -54,8 +51,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: './dist/${{matrix.OUT_FILE_NAME}}'
-          
+          files: './dist/${{matrix.OUT_FILE_NAME}}'   
       - name: Upload release assets
         uses: actions/upload-release-asset@v1
         env:
