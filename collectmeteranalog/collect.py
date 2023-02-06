@@ -56,6 +56,8 @@ def readimages(servername, output_dir, daysback=15):
                 path = output_dir + "/" + servername + "/" + picturedate + "/" + hour
                 os.makedirs(path, exist_ok=True) 
                 for url in urls:
+                    if (url[-4] != 'jpg'):
+                        continue
                     prefix = os.path.basename(url).split('_', 1)[0]
                     if (prefix == os.path.basename(url)):
                         prefix = ''
@@ -66,6 +68,7 @@ def readimages(servername, output_dir, daysback=15):
                     while countrepeat > 0:
                         if (not os.path.exists(path + "/" + prefix + filename)):
                             try:
+                                print(serverurl+url)
                                 img = Image.open(requests.get(serverurl+url, stream=True).raw)
                                 img.save(path + "/" + prefix + filename)
                                 count = count + 1
