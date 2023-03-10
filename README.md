@@ -133,6 +133,11 @@ If another model should be used for prediction (ana-con, ana-class100)
 
     python3 -m collectmeteranalog --collect=<ip or servername> --model=<modelpath.tflite>
 
+Sometimes it's usefull to change the similiar image recognition. The parameter is default 2. Smaller values for less 
+similiars, higher values if you have to much similiars.
+
+    python3 -m collectmeteranalog --collect=<ip or servername> --similiarbits=1
+
 
 ### Ready to share
 
