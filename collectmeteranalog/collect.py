@@ -115,8 +115,8 @@ def ziffer_data_files(input_dir):
     return  imgfiles
 
 def remove_similar_images(image_filenames, meter, similarbits=2,  hashfunc = imagehash.average_hash, saveduplicates=False):
-    '''removes similar images. 
-    
+    '''removes similar images.
+
     '''
     images = []
     count = 0
@@ -137,25 +137,24 @@ def remove_similar_images(image_filenames, meter, similarbits=2,  hashfunc = ima
     else:
         HistoricHashData = []
 
-    count = 0
-
     duplicates = {}
     for hash in images:
         if (hash[1] not in duplicates):
             similarimgs = [i for i in HistoricHashData if abs(i[0]-hash[0]) < similarbits and i[1]!=hash[1]]
             if len(similarimgs) > 0:               # es wurden in den alten hashes schon vergleichbare bilder gefunden
                 if (duplicates == {}):
-                    duplicates = set([hash[1]])
+                    duplicates = {hash[1]}
                 else:
-                    duplicates |= set([hash[1]])                
+                    duplicates |= {hash[1]}
             else:                                   # es wird in den neuen Biler gesucht gefunden
                 similarimgs = [i for i in images if abs(i[0]-hash[0]) < similarbits and i[1]!=hash[1]]
-                # add duplicates
-                if (duplicates == {}):
-                    duplicates = set([row[1] for row in similarimgs])
-                else:
-                    duplicates |= set([row[1] for row in similarimgs])
-        count = count + 1
+
+                if len(similarimgs) > 0:  # es wurden in den den neuen images schon vergleichbare bilder gefunden
+
+                    if (duplicates == {}):
+                        duplicates = set([row[1] for row in similarimgs])
+                    else:
+                        duplicates |= set([row[1] for row in similarimgs])
 
     # extend Historic Hash Data
     for _image in images:
@@ -165,14 +164,19 @@ def remove_similar_images(image_filenames, meter, similarbits=2,  hashfunc = ima
             
     # remove now all duplicates
     if saveduplicates:
-        print(f"{len(duplicates)} duplicates will moved to .data/raw_images/duplicates.")
         os.makedirs(target_store_duplicates, exist_ok=True)
+        count = 0
         for image in duplicates:
+            count = count + 1
             os.replace(image, os.path.join(target_store_duplicates, os.path.basename(image)))
+        print(f"{count} duplicates will moved to .data/raw_images/duplicates.")
     else:
-        print(f"{len(duplicates)} duplicates will be removed.")
+        count = 0
         for image in duplicates:
+            count = count + 1
             os.remove(image)
+        print(f"{count} duplicates will be removed.")
+
 
 def move_to_label(files, meter):
     print("Move to label")
@@ -187,7 +191,6 @@ def collect(meter, days, keepolddata=False, download=True, startlabel=0, savedup
     # ensure the target path exists
     os.makedirs(target_raw_path, exist_ok=True)
     print("Startlabel", startlabel)
-    print("saveduplicates", saveduplicates)
 
     # read all images from meters
     if download:
