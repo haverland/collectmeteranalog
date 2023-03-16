@@ -69,14 +69,30 @@ def readimages(servername, output_dir, daysback=15):
                         if (not os.path.exists(path + "/" + prefix + filename)):
                             try:
                                 print(serverurl+url)
-                                img = Image.open(requests.get(serverurl+url, stream=True).raw)
-                                img.save(path + "/" + prefix + filename)
+                                image = requests.get(serverurl+url, stream=True)
                                 count = count + 1
                                 countrepeat = 0
                             except ConnectionError as h:
                                 print( path + "/" + prefix + filename + " could not be loaded - Retry in 10 s ... " + str(countrepeat))
                                 time.sleep(10)
                                 countrepeat = countrepeat - 1
+                                continue
+                            except TimeoutError as h:
+                                print( path + "/" + prefix + filename + " could not be loaded - Retry in 10 s ... " + str(countrepeat))
+                                time.sleep(10)
+                                countrepeat = countrepeat - 1
+                                continue
+
+                            try:
+                                img = Image.open(image.raw)
+                                img.save(path + "/" + prefix + filename)
+                            except Exception as e:
+                                print( path + "/" + prefix + filename + " could not be opened as an image: %r!" % e)
+
+                            count = count + 1
+                            countrepeat = 0
+
+
     print(f"{count} images are loaded from meter: {servername}")
 
 def save_hash_file(images, hashfilename):
