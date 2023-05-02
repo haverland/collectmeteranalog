@@ -19,7 +19,7 @@ long_description = """
 
 setup(
     name='collectmeteranalog',
-    version='1.0.14',
+    version='1.0.15',
     url='https://github.com/haverland/collectmeteranalog',
     license='Apache 2.0',
     author='Frank Haverland',
@@ -35,7 +35,8 @@ setup(
                     'requests',
                     'pandas',
                     'tflite-runtime; sys_platform == "linux"',
-                    'importlib-metadata; python_version == "3.9"'],
+                    'importlib-metadata; python_version == "3.9"',
+                    'msvc-runtime;sys_platform == "windows"'],
     tests_require=['nose'],
     packages=find_packages(exclude=['tests']),
     description='Reads images from water meter pointers.',
