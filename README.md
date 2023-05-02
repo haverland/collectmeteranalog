@@ -58,17 +58,19 @@ After it the duplicates will be automaticly removed and finally you have a folde
 
 ##### Windows, MacOS, Linux
 
-The executables are console applications. You can use it like python
+The executables are console applications. You must unzip the download and can use it like python from console:
 
-    Windows-collectmeteranalog.exe --collect=<your-esp32name> --days=3
+    Windows:    collectmeteranalog.exe --collect=<your-esp32name> --days=3
 ,
 
-    Linux-collectmeteranalog --collect=<your-esp32name> --days=3
+    Linux:      collectmeteranalog --collect=<your-esp32name> --days=3
 or
 
-    collectmeteranalog --collect=<your-esp32name> --days=3
+    Macos:      collectmeteranalog --collect=<your-esp32name> --days=3
 
-Windows and MacOS excecutables have no prediction, because the tflite-runtime is only available for linux and the complete tensorflow library is to big (600MB) for a single application.
+The startup is on all targets realy slow. 
+Windows and MacOS excecutables have no prediction, because the tflite-runtime is only available for linux and 
+the complete tensorflow library is to big (600MB) for a single application.
  
 
 ### Label the images
