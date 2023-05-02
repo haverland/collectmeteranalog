@@ -32,6 +32,7 @@ jobs:
             POST_BUILD_CMD: >
               Compress-Archive -Path dist/* -Destination collectmeteranalog-windows.zip
               dir
+              dir dist/
             OUT_FILE_NAME: collectmeteranalog-windows.zip
             ASSET_MIME: application/zip
     steps:
