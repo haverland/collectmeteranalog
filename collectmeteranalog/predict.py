@@ -17,7 +17,7 @@ from collectmeteranalog import glob
 
 
 interpreter=None
-internal_model_path = pkg_resources.resource_filename('collectmeteranalog', 'models/ana-class100_0120_s1_q.tflite')
+internal_model_path = pkg_resources.resource_filename('collectmeteranalog', 'models/ana-class100_0157_s1_q.tflite')
 
 def load_interpreter(model_path):
     global interpreter

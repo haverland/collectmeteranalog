@@ -44,9 +44,9 @@ def label(path, startlabel=0, imageurlsfile=None, ticksteps=1):
 
     if (imageurlsfile!=None):
         files = pd.read_csv(imageurlsfile, index_col=0).to_numpy().reshape(-1)
-        for j, file in enumerate(files):
+        for file in files:
             if (not os.path.exists(file)):
-                files = np.delete(files, j, axis=0)
+              files = files[~np.isin(files, file)]
     else: 
         files = ziffer_data_files(path)
 

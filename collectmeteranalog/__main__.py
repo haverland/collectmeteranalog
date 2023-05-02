@@ -1,9 +1,9 @@
 import argparse
 import sys
-from .collect import collect
-from .labeling import label
-from .predict import load_interpreter
-from . import glob
+from collect import collect
+from labeling import label
+from predict import load_interpreter
+import glob
 
 
 def main():
