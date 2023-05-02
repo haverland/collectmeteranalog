@@ -5,7 +5,7 @@ block_cipher = None
 
 
 a = Analysis(
-    ['collectmeteranalog/__main__.py'],
+    ['run.py'],
     pathex=[],
     binaries=[],
     datas=[('collectmeteranalog/models/*.tflite', 'collectmeteranalog/models')],

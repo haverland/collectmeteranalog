@@ -1,9 +1,11 @@
 import argparse
 import sys
-from collect import collect
-from labeling import label
-from predict import load_interpreter
-import glob
+
+from collectmeteranalog import glob
+from collectmeteranalog.collect import collect
+from collectmeteranalog.labeling import label
+from collectmeteranalog.predict import load_interpreter
+
 
 
 def main():

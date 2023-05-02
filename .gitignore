@@ -8,3 +8,5 @@ data/
 build/
 collectmeteranalog/__pycache__
 .idea/
+dist/__main__
+dist/collectmeteranalog
