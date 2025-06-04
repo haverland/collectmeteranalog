@@ -1,5 +1,6 @@
 from glob import glob
 import os
+import sys
 from PIL import Image
 import matplotlib
 import numpy as np
@@ -9,7 +10,9 @@ from matplotlib.widgets import Slider, Button, RadioButtons, TextBox
 import shutil
 import pandas as pd
 from collectmeteranalog.predict import predict
+from collectmeteranalog.__version__ import __version__
 from numpy import pi
+
 
 def ziffer_data_files(input_dir):
     '''return a list of all images in given input dir in all subdirectories'''
@@ -20,10 +23,10 @@ def ziffer_data_files(input_dir):
                 imgfiles.append(root + "/" + file)
     
     imgfiles = sorted(imgfiles, key=lambda x : os.path.basename(x))
-    return  imgfiles
+    return imgfiles
 
 
-def label(path, startlabel=0, imageurlsfile=None, ticksteps=1):
+def label(path, startlabel=0.0, labelfile_path=None, ticksteps=1):
     global filename
     global i
     global im
@@ -32,28 +35,65 @@ def label(path, startlabel=0, imageurlsfile=None, ticksteps=1):
     global ax2
     global slabel
     global files
-    global predbox
+    global pred_label
     global plotedValue
     global usegrid 
     global ticksteps_s
+    global labelfile_prediction
 
     ticksteps_s = ticksteps
     usegrid = True
+    labelfile_prediction = None
 
-    print(f"Startlabel", startlabel)
+    if labelfile_path is not None:
+        try:
+            print(f"Loading image file list | labelfile: {labelfile_path}")
 
-    if (imageurlsfile!=None):
-        files = pd.read_csv(imageurlsfile, index_col=0).to_numpy().reshape(-1)
-        for file in files:
-            if (not os.path.exists(file)):
-              files = files[~np.isin(files, file)]
-    else: 
+
+            # Load CSV file (only required columns)
+            files_df = pd.read_csv(labelfile_path, index_col="Index", usecols=["Index", "File", "Predicted"])
+
+            # Load image filename (without path) and add labeling path
+            files = np.array([os.path.join(path, f) for f in files_df["File"]])
+
+            # Load prediction from labelfile if column is available
+            if "Predicted" in files_df.columns:
+                labelfile_prediction = files_df["Predicted"].to_numpy().reshape(-1)
+                print("labelfile: Prediction data available")
+            else:
+                labelfile_prediction = [None] * len(files_df)
+                print("labelfile: No prediction data available")
+
+            print(f"Loading images from path: {os.path.dirname(files[0])}")
+
+            # List only files which are physically present
+            files = np.array([f for f in files if os.path.exists(f)])
+
+        except Exception as e:
+            print(f"Columns 'Index, File, Predicted' in labelfile not found. Try loading labelfile in legacy format...")
+
+            try:
+                raw_files = pd.read_csv(labelfile_path, index_col=0).to_numpy().reshape(-1)
+
+                print(f"Loading images from path: {os.path.join(path, os.path.dirname(raw_files[0]))}")
+                files = np.array([os.path.join(path, f) for f in raw_files if os.path.exists(os.path.join(path, f))])
+
+                labelfile_prediction = [None] * len(files)
+            
+            except Exception as legacy_e:
+                print(f"Legacy loading failed: {legacy_e}")
+                raise SystemExit("Failed to load labelfile in any supported format.")
+    else:
+        print(f"Loading images from path: {path}")
         files = ziffer_data_files(path)
 
+
     if (len(files)==0):
-        print("No images found in path")
-        exit(1)
-        
+        print("No images found in defined path")
+        sys.exit(1)
+
+
+    print(f"Startlabel:", startlabel)
     i = 0
     img, filelabel, filename, i = load_image(files, i, startlabel)
 
@@ -63,7 +103,7 @@ def label(path, startlabel=0, imageurlsfile=None, ticksteps=1):
     # set window title
     fig = plt.gcf()
     
-    fig.canvas.manager.set_window_title('1 of ' + str(len(files)) + ' images')
+    fig.canvas.manager.set_window_title(f"collectmeteranalog v{__version__}   |   Image: 1 / {str(len(files))}")
     ax0 = fig.add_subplot(111)
     ax0.axis("off")
 
@@ -91,85 +131,96 @@ def label(path, startlabel=0, imageurlsfile=None, ticksteps=1):
     ax2.set_yticklabels([])
     #ax2.spines['polar'].set_visible(False)
     #plt.text(1.1, 0.9, "You can use cursor key controll also:\n\nleft/right = prev/next\nup/down=in/decrease value\ndelete=remove.", fontsize=6)
-    prediction = predict(img)
     ax=plt.gca()
 
-    axp = plt.axes([0.05, 0.5, 0.1, 0.2])
-    predbox = TextBox(axp, label='', initial='Pred.:\n{:.1f}'.format(prediction), textalignment='center')
-    
     axlabel =  plt.axes([0.22, 0.025, 0.58, 0.03])
     slabel = Slider(axlabel, label='Label',valmin= 0.0, valmax=9.9, valstep=0.1, 
                     valinit=filelabel,
                     orientation='horizontal')
     
+    # Show prediction value in plot
+    pred_label = fig.text(-0.22, 0.5, 'Prediction\ndisabled', transform=ax0.transAxes, ha='center', va='center', 
+                          backgroundcolor='lightgray', bbox=dict(facecolor='#f8f8f8', edgecolor='none'))
+
+    prediction = predict(img)
+    if (prediction == -1 and labelfile_prediction is not None and isinstance(labelfile_prediction, (list, np.ndarray))
+        and i < len(labelfile_prediction) and labelfile_prediction[i] is not None and not pd.isna(labelfile_prediction[i])):
+        prediction = labelfile_prediction[i]
+    
+    if (prediction != -1):
+        pred_label.set_text("Prediction:\n{:.1f}".format(prediction))
+    
     # Show value in plot
     plotedValue, = ax2.plot([0, 2*pi * filelabel / 10], [0, 2], 'g', linewidth=5)    
     
-    previousax = plt.axes([0.87, 0.225, 0.1, 0.04])
-    bprevious = Button(previousax, 'previous', hovercolor='0.975')
-    nextax = plt.axes([0.87, 0.025, 0.1, 0.04])
-    bnext = Button(nextax, 'update', hovercolor='0.975')
-    removeax = plt.axes([0.87, 0.4, 0.1, 0.04])
-    bremove = Button(removeax, 'delete', hovercolor='0.975')
+    previousax = plt.axes([0.87, 0.225, 0.115, 0.05])
+    bprevious = Button(previousax, 'Previous', hovercolor='0.975')
+    nextax = plt.axes([0.87, 0.025, 0.115, 0.05])
+    bnext = Button(nextax, 'Update', hovercolor='0.975')
+    removeax = plt.axes([0.87, 0.4, 0.115, 0.05])
+    bremove = Button(removeax, 'Delete', hovercolor='0.975')
     
-    increase0_1_label = plt.axes([0.93, 0.1, 0.05, 0.04])
+    increase0_1_label = plt.axes([0.93, 0.095, 0.055, 0.05])
     bincrease0_1_label = Button(increase0_1_label, '+0.1', hovercolor='0.975')
-    increase1_label = plt.axes([0.93, 0.15, 0.05, 0.04])
+    increase1_label = plt.axes([0.93, 0.155, 0.055, 0.05])
     bincrease1_label = Button(increase1_label, '+1.0', hovercolor='0.975')
     
-    decrease0_1_label = plt.axes([0.87, 0.1, 0.05, 0.04])
+    decrease0_1_label = plt.axes([0.87, 0.095, 0.055, 0.05])
     bdecrease0_1_label = Button(decrease0_1_label, '-0.1', hovercolor='0.975')
-    decrease1_label = plt.axes([0.87, 0.15, 0.05, 0.04])
+    decrease1_label = plt.axes([0.87, 0.155, 0.055, 0.05])
     bdecrease1_label = Button(decrease1_label, '-1.0', hovercolor='0.975')
 
-    toggle_grid_label = plt.axes([0.87, 0.95, 0.1, 0.04])
-    toggle_grid_btn = Button(toggle_grid_label, 'grid', hovercolor='0.975')
+    toggle_grid_label = plt.axes([0.87, 0.95, 0.115, 0.05])
+    toggle_grid_btn = Button(toggle_grid_label, 'Grid', hovercolor='0.975')
 
-    def load_previous():
-        global im
+
+    def update_window():
         global i
+        global im
         global filelabel
         global filename
-        global predbox
+        global pred_label
+        global labelfile_prediction
 
-        i = (i - 1) % len(files)
         img, filelabel, filename, i = load_image(files, i)
         im.set_data(img)
         plotedValue.set_xdata([0, 2*pi * filelabel / 10])        
         slabel.set_val(filelabel)
         fig = plt.gcf()
-        fig.canvas.manager.set_window_title(str(i+1) + ' of ' + str(len(files)) + ' images')
-        predbox.set_val("{:.1f}".format(predict(img)))
+        fig.canvas.manager.set_window_title(f"collectmeteranalog v{__version__}   |   Image: {str(i+1)} / {str(len(files))}")
         
+        prediction = predict(img)
+        if (prediction == -1 and labelfile_prediction is not None and isinstance(labelfile_prediction, (list, np.ndarray))
+            and i < len(labelfile_prediction) and labelfile_prediction[i] is not None and not pd.isna(labelfile_prediction[i])):
+            prediction = labelfile_prediction[i]
+        
+        if (prediction != -1):
+            pred_label.set_text("Prediction:\n{:.1f}".format(prediction))
+    
+    
+    def load_previous():
+        global i
+
+        i = (i - 1) % len(files)
+
+        update_window()
 
 
     def load_next(increaseindex = True):
-        global im
         global i
-        global filelabel
-        global filename
-        global predbox
 
         if increaseindex:
             i = (i + 1) % len(files)
         
-        img, filelabel, filename, i = load_image(files, i)
-        im.set_data(img)
-        plotedValue.set_xdata([0, 2*pi * filelabel / 10])        
-        slabel.set_val(filelabel)
-        fig = plt.gcf()
-        fig.canvas.manager.set_window_title(str(i+1) + ' of ' + str(len(files)) + ' images')
-        predbox.set_val("Pred.:\n{:.1f}".format(predict(img)))
-        
-        updatePlot()
+        update_window()
         
 
     def updatePlot():   
-        
         plotedValue.set_xdata([0, 2*pi * filelabel / 10])  
         plt.pause(0.1)
         #fig.canvas.draw()
         #fig.canvas.flush_events()
+
 
     def increase0_1_label(event):
         global filelabel
@@ -185,6 +236,7 @@ def label(path, startlabel=0, imageurlsfile=None, ticksteps=1):
         slabel.set_val(filelabel)
         updatePlot()
 
+
     def decrease0_1_label(event):
         global filelabel
 
@@ -192,12 +244,14 @@ def label(path, startlabel=0, imageurlsfile=None, ticksteps=1):
         slabel.set_val(filelabel)
         updatePlot()
 
+
     def decrease1_label(event):
         global filelabel
 
         filelabel = (filelabel - 1) % 10
         slabel.set_val(filelabel)
         updatePlot()
+
 
     def remove(event):
         global filename
@@ -207,8 +261,10 @@ def label(path, startlabel=0, imageurlsfile=None, ticksteps=1):
         files = np.delete(files,i, 0)
         load_next(False)
 
+
     def previous(event):
         load_previous()
+
 
     def l_next(event):
         global filelabel
@@ -221,6 +277,7 @@ def label(path, startlabel=0, imageurlsfile=None, ticksteps=1):
             files[i] = _zw
             shutil.move(filename, _zw)
         load_next()
+
 
     def on_press(event):
         #print('press', event.key)
@@ -242,7 +299,6 @@ def label(path, startlabel=0, imageurlsfile=None, ticksteps=1):
             remove(event)
 
 
-
     def on_click(event):  
         global slabel      
         global filelabel
@@ -256,6 +312,7 @@ def label(path, startlabel=0, imageurlsfile=None, ticksteps=1):
         slabel.set_val(filelabel) # event.xdata is directly in rad
         updatePlot()
         #print(event.xdata, slabel.val)
+
 
     def on_toggle_grid(event):  
         global ax2
@@ -310,7 +367,6 @@ def label(path, startlabel=0, imageurlsfile=None, ticksteps=1):
     plt.show()
 
 
-
 def load_image(files, i, startlabel = -1):
 
     while True:
@@ -333,4 +389,3 @@ def load_image(files, i, startlabel = -1):
     filename = files[i]
     test_image = Image.open(filename)
     return test_image, category, filename, i
-    

@@ -3,7 +3,6 @@ on:
   push:
 
 jobs:
-  
   build:
     name: Build Executables
     runs-on: ${{ matrix.os }}
@@ -12,6 +11,7 @@ jobs:
       matrix:
         include:
           - os: windows-latest
+            OS_NAME: windows
             BUILD_CMD: pyinstaller collectmeteranalog.spec
             POST_BUILD_CMD: >+
               Compress-Archive -Path dist/* -Destination dist/collectmeteranalog-windows.zip
@@ -19,49 +19,70 @@ jobs:
             ASSET_MIME:
               application/zip
           - os: ubuntu-latest
+            OS_NAME: linux
             BUILD_CMD: pyinstaller collectmeteranalog.spec
             POST_BUILD_CMD: >
               cd dist/ &&
               ls -Rls &&
-              zip -r9 collectmeteranalog-linux.zip collectmeteranalog
+              zip -r9 collectmeteranalog-linux.zip collectmeteranalog &&
+              cd ..
             OUT_FILE_NAME: collectmeteranalog-linux.zip
             ASSET_MIME: application/zip
           - os: macos-latest
+            OS_NAME: macos
             BUILD_CMD: pyinstaller collectmeteranalog.spec
             POST_BUILD_CMD: >
               cd dist/ &&
               ls -Rls &&
-              zip -r9 collectmeteranalog-macos.zip collectmeteranalog
+              zip -r9 collectmeteranalog-macos.zip collectmeteranalog &&
+              cd ..
             OUT_FILE_NAME: collectmeteranalog-macos.zip
             ASSET_MIME: application/zip
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+
       - name: Setup Python
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.9.12'
+          python-version: '3.10'
+
       - name: Install dependencies for ${{ matrix.os }}
         run: |
           python -m pip install --upgrade pip wheel setuptools
           pip install -r requirements.txt
           pip install pyinstaller
+
+      - name: Extract application version
+        id: get_version
+        shell: bash
+        run: |
+          version=$(sed -n "s/^__version__ *= *['\"]\([^'\"]*\)['\"].*/\1/p" collectmeteranalog/__version__.py || echo "0.0.0")
+          echo "VERSION=v$version" >> $GITHUB_ENV
+
       - name: Pre-Build for ${{ matrix.os }}
         if: ${{ matrix.PRE_BUILD_CMD != '' }}
         run: ${{ matrix.PRE_BUILD_CMD }}
+
       - name: Build with pyinstaller for ${{ matrix.os }}
         run: ${{ matrix.BUILD_CMD }}
+
       - name: Post-Build for ${{ matrix.os }}
         if: ${{ matrix.POST_BUILD_CMD != '' }}
-        run: ${{ matrix.POST_BUILD_CMD }}
+        run: |
+          ${{ matrix.POST_BUILD_CMD }}
+          mv dist/${{ matrix.OUT_FILE_NAME }} dist/collectmeteranalog-${{ matrix.OS_NAME }}-${{ env.VERSION }}.zip
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          path: |
+            dist/*
+            !dist/*.zip
+          name: 'collectmeteranalog-${{ matrix.OS_NAME }}-${{ env.VERSION }}'
+
       - name: Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: './dist/${{matrix.OUT_FILE_NAME}}'   
-      - name: Upload created build on action
-        uses: actions/upload-artifact@v3
-        with:
-          path: './dist/${{matrix.OUT_FILE_NAME}}'
-          name: '${{runner.os}}-${{matrix.OUT_FILE_NAME}}'
- 
+          files: './dist/collectmeteranalog-${{ matrix.OS_NAME }}-${{ env.VERSION }}.zip'
