@@ -49,25 +49,29 @@ def label(path, startlabel=0.0, labelfile_path=None, ticksteps=1):
         try:
             print(f"Loading image file list | labelfile: {labelfile_path}")
 
-
             # Load CSV file (only required columns)
             files_df = pd.read_csv(labelfile_path, index_col="Index", usecols=["Index", "File", "Predicted"])
 
-            # Load image filename (without path) and add labeling path
-            files = np.array([os.path.join(path, f) for f in files_df["File"]])
+            # Add path to file name
+            files_df["FilePath"] = files_df["File"].apply(lambda f: os.path.join(path, f))
+
+            # Keep only entries where file exists
+            files_df = files_df[files_df["FilePath"].apply(os.path.exists)]
 
             # Load prediction from labelfile if column is available
             if "Predicted" in files_df.columns:
                 labelfile_prediction = files_df["Predicted"].to_numpy().reshape(-1)
                 print("labelfile: Prediction data available")
             else:
-                labelfile_prediction = [None] * len(files_df)
+                labelfile_prediction = []
                 print("labelfile: No prediction data available")
 
-            print(f"Loading images from path: {os.path.dirname(files[0])}")
+            files = files_df["FilePath"].to_numpy()
 
-            # List only files which are physically present
-            files = np.array([f for f in files if os.path.exists(f)])
+            if len(files) > 0:
+                print(f"Loading images from path: {os.path.dirname(files[0])}")
+            else:
+                raise SystemExit("Image file list empty. No files to load")
 
         except Exception as e:
             print(f"Columns 'Index, File, Predicted' in labelfile not found. Try loading labelfile in legacy format...")
