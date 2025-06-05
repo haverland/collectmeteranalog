@@ -7,6 +7,11 @@ except ImportError:
     ez_setup.use_setuptools()
     from setuptools import setup, find_packages
 
+# Reads application version from 'collectmeteranalog/__version__.py'
+version_file = {}
+with open(os.path.join("collectmeteranalog", "__version__.py")) as f:
+    exec(f.read(), version_file)
+
 
 my_project_path = os.path.abspath(os.path.dirname(__file__))
 
@@ -19,7 +24,7 @@ long_description = """
 
 setup(
     name='collectmeteranalog',
-    version='1.0.16',
+    version=version_file["__version__"],
     url='https://github.com/haverland/collectmeteranalog',
     license='Apache 2.0',
     author='Frank Haverland',
@@ -42,7 +47,6 @@ setup(
     description='Reads images from water meter pointers.',
     long_description = long_description,
     platforms='any',
-    keywords = "different tags here",
     classifiers = [
         'Programming Language :: Python',
         'Development Status :: 4 - Beta',
@@ -51,7 +55,5 @@ setup(
         'Operating System :: OS Independent',
         'Topic :: Software Development :: Libraries :: Application Frameworks',
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
-        ],
-    package_data={'collectmeteranalog': ['models/*.tflite']},
-
+        ]
     )

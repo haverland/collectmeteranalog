@@ -9,3 +9,5 @@ build/
 collectmeteranalog/__pycache__
 .idea/
 dist/
+collectmeteranalog.egg-info/
+.venv

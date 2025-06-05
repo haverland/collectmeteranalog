@@ -3,6 +3,7 @@ import urllib.request
 import re
 import requests
 import os
+import sys
 from PIL import Image
 from datetime import date, timedelta
 import imagehash
@@ -13,11 +14,10 @@ import time
 import numpy as np
 
 
-
-target_path = "data"                   # root data path
 target_raw_path =  "data/raw_images"   # here all raw images will be stored
 target_label_path = "data/labeled"
 target_store_duplicates = "data/raw_images/duplicates"
+target_hash_data = "data/HistoricHashData.txt"
 
 
 def yesterday(daysbefore=1):
@@ -26,80 +26,110 @@ def yesterday(daysbefore=1):
     return yesterday.strftime("%Y%m%d")
 
 
-def readimages(servername, output_dir, daysback=15):
-    '''get all images taken yesterday and store it in target path'''
-    serverurl = "http://" + servername
+def readimages(servername, output_dir, daysback=3):
+    '''get all images taken within defined days back and store it in target path'''
+    
+    if not servername.startswith("http://"):
+        serverurl = "http://" + servername
+    else:
+        serverurl = servername
+
+    print(f"Download images from {serverurl} ...")
     count = 0
-    print(f"Loading data from {servername} ...")
+
     for datesbefore in range(0, daysback):
         picturedate = yesterday(daysbefore=datesbefore)
-        # only if not exists already
+
         for i in range(24):
             hour = f'{i:02d}'
-            if not os.path.exists(path = output_dir + "/" + servername + "/" + picturedate + "/" + hour):
-                try:
-                    fp = urllib.request.urlopen(serverurl + "/fileserver/log/analog/" + picturedate + "/" + hour + "/")
-                except HTTPError as h:
-                    print( serverurl + "/fileserver/log/analog/" + picturedate + "/" + hour + "/ not found." )
-                    continue
-                except URLError as ue:
-                    print("URL-Error! Server not available? Requested URL was: ", serverurl + "/fileserver/log/analog/" + picturedate + "/" + hour + "/" )
-                    exit(1)
-                print("Loading ... ",  servername + "/" + picturedate + "/" + hour)
-                
-                mybytes = fp.read()
+            
+            path = os.path.join(output_dir, servername, picturedate, hour)
+            if os.path.exists(path):
+                continue
 
-                mystr = mybytes.decode("utf8")
+            try:
+                print("Download images from folder: /fileserver/log/analog/" + picturedate + "/" + hour)
+                url_list = f"{serverurl}/fileserver/log/analog/{picturedate}/{hour}/"
+                fp = urllib.request.urlopen(url_list)
+                url_list_str = fp.read().decode("utf8")
                 fp.close()
 
-                urls = re.findall(r'href=[\'"]?([^\'" >]+)', mystr)
-                path = output_dir + "/" + servername + "/" + picturedate + "/" + hour
-                os.makedirs(path, exist_ok=True) 
-                for url in urls:
-                    if (url[-3:] != 'jpg'):
+            except HTTPError as h:
+                print(f"{url_list} not found")
+                continue
+            
+            except URLError as ue:
+                print("URL-Error! Server not available? Requested URL was:", url_list)
+                sys.exit(1)
+            
+            urls = re.findall(r'href=[\'"]?([^\'" >]+)', url_list_str)
+            os.makedirs(path, exist_ok=True) 
+
+            for url in urls:
+                # Skip files which are not jpg
+                if not url.lower().endswith(('.jpg', '.jpeg')):
+                    continue
+
+                prefix = os.path.basename(url).split('_', 1)[0]
+                if (prefix == os.path.basename(url)):
+                    prefix = ''
+                else:
+                    prefix = prefix + '_'
+                
+                filename = secrets.token_hex(nbytes=16) + ".jpg"
+                filepath = os.path.join(path, prefix + filename)
+
+                # Skip existing path
+                if os.path.exists(filepath):
+                    continue
+
+                countrepeat = 10
+                while countrepeat > 0:
+                    try:
+                        print(serverurl+url)
+                        with requests.get(serverurl+url, stream=True, timeout=15) as response:
+                            # Check for HTTP errors
+                            response.raise_for_status()
+
+                            content_type = response.headers.get("Content-Type", "")
+
+                            if content_type == "image/jpeg":
+                                # Save directly without re-encoding
+                                with open(filepath, "wb") as f:
+                                    for chunk in response.iter_content(chunk_size=8192):
+                                        f.write(chunk)
+                            else:
+                                # Re-encode to JPEG
+                                img = Image.open(response.raw)
+                                img = img.convert("RGB")  # ensures JPEG compatibility
+                                img.save(filepath, format="JPEG", quality=100)
+
+                            count += 1
+                            break
+                
+                    except requests.exceptions.Timeout:
+                        print(filepath + " timed out - Retrying in 10 s ... | (%d)..." % (countrepeat - 1))
+                        countrepeat -= 1
+                        time.sleep(10)
                         continue
-                    prefix = os.path.basename(url).split('_', 1)[0]
-                    if (prefix == os.path.basename(url)):
-                        prefix = ''
-                    else:
-                        prefix = prefix + '_'
-                    filename = secrets.token_hex(nbytes=16) + ".jpg"
-                    countrepeat = 10
-                    while countrepeat > 0:
-                        if (not os.path.exists(path + "/" + prefix + filename)):
-                            try:
-                                print(serverurl+url)
-                                image = requests.get(serverurl+url, stream=True)
-                                count = count + 1
-                                countrepeat = 0
-                            except ConnectionError as h:
-                                print( path + "/" + prefix + filename + " could not be loaded - Retry in 10 s ... " + str(countrepeat))
-                                time.sleep(10)
-                                countrepeat = countrepeat - 1
-                                continue
-                            except TimeoutError as h:
-                                print( path + "/" + prefix + filename + " could not be loaded - Retry in 10 s ... " + str(countrepeat))
-                                time.sleep(10)
-                                countrepeat = countrepeat - 1
-                                continue
 
-                            try:
-                                img = Image.open(image.raw)
-                                img.save(path + "/" + prefix + filename)
-                            except Exception as e:
-                                print( path + "/" + prefix + filename + " could not be opened as an image: %r!" % e)
+                    except (requests.exceptions.RequestException, OSError) as e:
+                        print(filepath + f" failed to load: {e}")
+                        break
 
-                            count = count + 1
-                            countrepeat = 0
+                    except Exception as e:
+                        print(filepath + f" unexpected error: {e}")
+                        break
 
+    print(f"{count} images downloaded from {servername}")
 
-    print(f"{count} images are loaded from meter: {servername}")
 
 def save_hash_file(images, hashfilename):
     f =  open(hashfilename, 'w', encoding='utf-8')
     for hash, img, meter, datum in images:
         f.write(datum + "\t" + meter+ "\t" + img + "\t" + str(hash)+'\n');
     f.close
+
 
 def load_hash_file(hashfilename):
     images = []
@@ -130,7 +160,8 @@ def ziffer_data_files(input_dir):
                 imgfiles.append(root + "/" + file)
     return  imgfiles
 
-def remove_similar_images(image_filenames, meter, similarbits=2,  hashfunc = imagehash.average_hash, saveduplicates=False):
+
+def remove_similar_images(path, image_filenames, meter, similarbits=2,  hashfunc = imagehash.average_hash, saveduplicates=False):
     '''removes similar images.
 
     '''
@@ -148,8 +179,8 @@ def remove_similar_images(image_filenames, meter, similarbits=2,  hashfunc = ima
             continue
         images.append([hash, img, meter, datum])
   
-    if (os.path.exists('data/HistoricHashData.txt')):
-        HistoricHashData = load_hash_file('data/HistoricHashData.txt')
+    if (os.path.exists(os.path.join(path, target_hash_data))):
+        HistoricHashData = load_hash_file(os.path.join(path, target_hash_data))
     else:
         HistoricHashData = []
 
@@ -176,16 +207,16 @@ def remove_similar_images(image_filenames, meter, similarbits=2,  hashfunc = ima
     for _image in images:
         if not _image[1] in duplicates:
             HistoricHashData.append(_image)
-    save_hash_file(HistoricHashData, 'data/HistoricHashData.txt')
+    save_hash_file(HistoricHashData, os.path.join(path, target_hash_data))
             
     # remove now all duplicates
     if saveduplicates:
-        os.makedirs(target_store_duplicates, exist_ok=True)
+        os.makedirs(os.path.join(path, target_store_duplicates), exist_ok=True)
         count = 0
         for image in duplicates:
             count = count + 1
-            os.replace(image, os.path.join(target_store_duplicates, os.path.basename(image)))
-        print(f"{count} duplicates will moved to .data/raw_images/duplicates.")
+            os.replace(image, os.path.join(os.path.join(path, target_store_duplicates), os.path.basename(image)))
+        print(f"{count} duplicates will moved to .../raw_images/duplicates.")
     else:
         count = 0
         for image in duplicates:
@@ -194,36 +225,36 @@ def remove_similar_images(image_filenames, meter, similarbits=2,  hashfunc = ima
         print(f"{count} duplicates will be removed.")
 
 
-def move_to_label(files, meter):
-    print("Move to label")
-    os.makedirs(target_label_path, exist_ok=True)
-    for file in files:
-        os.replace(file, os.path.join(target_label_path, os.path.basename(file)))
+def move_to_label(path, keepolddata, files):
+    
+    os.makedirs(os.path.join(path, target_label_path), exist_ok=True)
+    if (keepolddata):
+        print("Copy files to folder 'labeled', keep source folder 'raw_images'")
+        for file in files:
+                shutil.copy(file, os.path.join(os.path.join(path, target_label_path), os.path.basename(file)))
+    else:
+        print("Move files to folder 'labeled' and cleanup source folder 'raw_images'")
+        for file in files:
+            os.replace(file, os.path.join(os.path.join(path, target_label_path), os.path.basename(file)))
 
-       
+        shutil.rmtree(os.path.join(path, target_raw_path))
 
 
-def collect(meter, days, keepolddata=False, download=True, startlabel=0, saveduplicates=False, ticksteps=1, similarbits=2):
+def collect(meter, path, days, keepolddata=False, download=True, startlabel=0, saveduplicates=False, ticksteps=1, similarbits=2):
     # ensure the target path exists
-    os.makedirs(target_raw_path, exist_ok=True)
-    print("Startlabel", startlabel)
+    os.makedirs(os.path.join(path, target_raw_path), exist_ok=True)
 
     # read all images from meters
     if download:
-        print("retrieve images")
-        readimages(meter, target_raw_path, days)
+        print("Download images")
+        readimages(meter, os.path.join(path, target_raw_path), days)
     
     # remove all same or similar images and remove the empty folders
-    remove_similar_images(ziffer_data_files(os.path.join(target_raw_path, meter)), meter, saveduplicates=saveduplicates, similarbits=similarbits)
+    remove_similar_images(path, ziffer_data_files(os.path.join(os.path.join(path, target_raw_path), meter)), 
+                          meter, saveduplicates=saveduplicates, similarbits=similarbits)
 
-    # move the files in one zip without directory structure
-    move_to_label(ziffer_data_files(os.path.join(target_raw_path, meter)), meter)
+    # move or copy the files in one zip without directory structure and optional cleanup source
+    move_to_label(path, keepolddata, ziffer_data_files(os.path.join(os.path.join(path, target_raw_path), meter)))
 
-    # cleanup
-    if not keepolddata:
-        shutil.rmtree(target_raw_path)
-
-    # label now
-    label(target_label_path, startlabel=startlabel, ticksteps=ticksteps)
-
-
+    # label images
+    label(os.path.join(path, target_label_path), startlabel=startlabel, ticksteps=ticksteps)

@@ -3,6 +3,7 @@ from datetime import date
 import imagehash
 from collectmeteranalog.collect import save_hash_file, ziffer_data_files
 
+
 def calculate_hash(image_filenames, meter, hashfunc = imagehash.average_hash):
     images = []
     print(f"Calculate hashes for {len(image_filenames)} images ..." )
@@ -16,7 +17,7 @@ def calculate_hash(image_filenames, meter, hashfunc = imagehash.average_hash):
             print('Problem: ', e, ' with ', img)
             continue
         images.append([hash, img, meter, datum])
-    return images;
+    return images
 
 
 input_dir = "data/labeled_20220606"

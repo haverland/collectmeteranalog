@@ -1,1 +1,0 @@
-from collectmeteranalog import collect
